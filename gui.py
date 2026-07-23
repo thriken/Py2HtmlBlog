@@ -26,10 +26,374 @@ from PyQt5.QtWidgets import (
     QLabel, QLineEdit, QTextEdit, QPushButton, QComboBox, QListWidget,
     QListWidgetItem, QTabWidget, QMessageBox, QInputDialog, QSplitter,
     QTableWidget, QTableWidgetItem, QHeaderView, QGroupBox, QCheckBox,
-    QStatusBar, QAction, QFileDialog
+    QStatusBar, QAction, QFileDialog, QFrame, QDialog, QDialogButtonBox,
+    QFormLayout
 )
-from PyQt5.QtCore import Qt, QThread, pyqtSignal
-from PyQt5.QtGui import QFont, QTextCursor
+from PyQt5.QtCore import Qt, QThread, pyqtSignal, QSize
+from PyQt5.QtGui import QFont, QTextCursor, QIcon, QColor, QPalette
+
+# ── 现代化全局样式表 ───────────────────────────────────────
+MODERN_STYLESHEET = """
+/* ===== 全局 ===== */
+QMainWindow {
+    background-color: #f0f2f5;
+}
+QWidget {
+    font-family: "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif;
+    font-size: 13px;
+    color: #1d1d1f;
+}
+
+/* ===== 主工具栏 ===== */
+QMainWindow::title {
+    background-color: #ffffff;
+    border-bottom: 1px solid #e2e4e8;
+    padding: 8px 16px;
+}
+
+/* ===== 选项卡 ===== */
+QTabWidget::pane {
+    border: 1px solid #e2e4e8;
+    border-radius: 8px;
+    background: #ffffff;
+    margin-top: -1px;
+}
+QTabBar::tab {
+    background: transparent;
+    color: #6b7280;
+    padding: 10px 24px;
+    margin-right: 4px;
+    border: none;
+    border-bottom: 2px solid transparent;
+    font-size: 13px;
+    font-weight: 500;
+    min-width: 80px;
+}
+QTabBar::tab:selected {
+    color: #2563eb;
+    border-bottom: 2px solid #2563eb;
+    font-weight: 600;
+}
+QTabBar::tab:hover:!selected {
+    color: #374151;
+    background: rgba(37, 99, 235, 0.04);
+    border-radius: 6px 6px 0 0;
+}
+
+/* ===== 按钮 ===== */
+QPushButton {
+    background-color: #ffffff;
+    color: #374151;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    padding: 8px 18px;
+    font-size: 13px;
+    font-weight: 500;
+    min-height: 20px;
+}
+QPushButton:hover {
+    background-color: #f9fafb;
+    border-color: #9ca3af;
+}
+QPushButton:pressed {
+    background-color: #f3f4f6;
+}
+QPushButton#btnPrimary {
+    background-color: #2563eb;
+    color: #ffffff;
+    border: 1px solid #2563eb;
+    font-weight: 600;
+}
+QPushButton#btnPrimary:hover {
+    background-color: #1d4ed8;
+    border-color: #1d4ed8;
+}
+QPushButton#btnPrimary:pressed {
+    background-color: #1e40af;
+}
+QPushButton#btnSuccess {
+    background-color: #10b981;
+    color: #ffffff;
+    border: 1px solid #10b981;
+    font-weight: 600;
+}
+QPushButton#btnSuccess:hover {
+    background-color: #059669;
+    border-color: #059669;
+}
+QPushButton#btnDanger {
+    background-color: #ef4444;
+    color: #ffffff;
+    border: 1px solid #ef4444;
+    font-weight: 500;
+}
+QPushButton#btnDanger:hover {
+    background-color: #dc2626;
+    border-color: #dc2626;
+}
+QPushButton#btnWarning {
+    background-color: #f59e0b;
+    color: #ffffff;
+    border: 1px solid #f59e0b;
+    font-weight: 600;
+}
+QPushButton#btnWarning:hover {
+    background-color: #d97706;
+    border-color: #d97706;
+}
+QPushButton:disabled {
+    background-color: #f3f4f6;
+    color: #9ca3af;
+    border-color: #e5e7eb;
+}
+
+/* ===== 输入框 ===== */
+QLineEdit, QTextEdit, QPlainTextEdit {
+    background-color: #ffffff;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 13px;
+    color: #1d1d1f;
+    selection-background-color: #bfdbfe;
+}
+QLineEdit:focus, QTextEdit:focus, QPlainTextEdit:focus {
+    border: 1px solid #2563eb;
+    outline: none;
+}
+QLineEdit:hover, QTextEdit:hover {
+    border-color: #9ca3af;
+}
+
+/* ===== 下拉框 ===== */
+QComboBox {
+    background-color: #ffffff;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 13px;
+    min-height: 20px;
+}
+QComboBox:hover {
+    border-color: #9ca3af;
+}
+QComboBox:focus {
+    border-color: #2563eb;
+}
+QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    width: 28px;
+    border-left: 1px solid #e5e7eb;
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+}
+QComboBox QAbstractItemView {
+    background: #ffffff;
+    border: 1px solid #e2e4e8;
+    border-radius: 6px;
+    padding: 4px;
+    selection-background-color: #eff6ff;
+    selection-color: #1d1d1f;
+    outline: none;
+}
+
+/* ===== 表格 ===== */
+QTableWidget {
+    background-color: #ffffff;
+    border: 1px solid #e2e4e8;
+    border-radius: 8px;
+    gridline-color: #f3f4f6;
+    font-size: 13px;
+    selection-background-color: #eff6ff;
+    selection-color: #1d1d1f;
+}
+QTableWidget::item {
+    padding: 8px 12px;
+    border-bottom: 1px solid #f3f4f6;
+}
+QTableWidget::item:selected {
+    background-color: #eff6ff;
+    color: #1d1d1f;
+}
+QTableWidget::item:focus {
+    outline: none;
+    border: none;
+}
+/* 表格内嵌编辑器 */
+QTableWidget QLineEdit,
+QTableWidget QTextEdit,
+QTableWidget QPlainTextEdit {
+    background-color: #ffffff;
+    border: 2px solid #2563eb;
+    border-radius: 4px;
+    padding: 1px 8px;
+    min-height: 18px;
+    color: #1d1d1f;
+    font-size: 13px;
+    line-height: 1.2;
+    selection-background-color: #bfdbfe;
+}
+QTableWidget QComboBox {
+    background-color: #ffffff;
+    border: 2px solid #2563eb;
+    border-radius: 4px;
+    padding: 1px 8px;
+    min-height: 18px;
+    font-size: 13px;
+    color: #1d1d1f;
+}
+QTableWidget QComboBox::drop-down {
+    border: none;
+    width: 20px;
+}
+QHeaderView::section {
+    background-color: #f9fafb;
+    color: #4b5563;
+    padding: 10px 12px;
+    border: none;
+    border-bottom: 2px solid #e2e4e8;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* ===== 列表 ===== */
+QListWidget {
+    background-color: #ffffff;
+    border: 1px solid #e2e4e8;
+    border-radius: 8px;
+    padding: 4px;
+    font-size: 13px;
+    outline: none;
+}
+QListWidget::item {
+    padding: 8px 12px;
+    border-radius: 4px;
+}
+QListWidget::item:selected {
+    background-color: #eff6ff;
+    color: #2563eb;
+}
+QListWidget::item:hover {
+    background-color: #f9fafb;
+}
+
+/* ===== 分组框 ===== */
+QGroupBox {
+    background-color: #ffffff;
+    border: 1px solid #e2e4e8;
+    border-radius: 8px;
+    margin-top: 16px;
+    padding: 20px 16px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #374151;
+}
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    padding: 0 8px;
+    color: #2563eb;
+    font-weight: 700;
+}
+
+/* ===== 标签 ===== */
+QLabel {
+    color: #4b5563;
+    font-size: 13px;
+}
+QLabel#sectionTitle {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1d1d1f;
+    padding: 4px 0;
+}
+
+/* ===== 分割器 ===== */
+QSplitter::handle {
+    background-color: #e5e7eb;
+    width: 1px;
+}
+QSplitter::handle:hover {
+    background-color: #2563eb;
+    width: 2px;
+}
+
+/* ===== 状态栏 ===== */
+QStatusBar {
+    background: #ffffff;
+    border-top: 1px solid #e2e4e8;
+    color: #6b7280;
+    font-size: 12px;
+    padding: 4px 12px;
+}
+
+/* ===== 滚动条 ===== */
+QScrollBar:vertical {
+    background: transparent;
+    width: 8px;
+    margin: 0;
+}
+QScrollBar::handle:vertical {
+    background: #d1d5db;
+    border-radius: 4px;
+    min-height: 40px;
+}
+QScrollBar::handle:vertical:hover {
+    background: #9ca3af;
+}
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    height: 0;
+}
+QScrollBar:horizontal {
+    background: transparent;
+    height: 8px;
+}
+QScrollBar::handle:horizontal {
+    background: #d1d5db;
+    border-radius: 4px;
+    min-width: 40px;
+}
+QScrollBar::handle:horizontal:hover {
+    background: #9ca3af;
+}
+QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {
+    width: 0;
+}
+
+/* ===== 提示框 ===== */
+QMessageBox {
+    background-color: #ffffff;
+}
+QMessageBox QLabel {
+    color: #1d1d1f;
+    font-size: 13px;
+}
+QMessageBox QPushButton {
+    min-width: 80px;
+}
+
+/* ===== 复选框 ===== */
+QCheckBox {
+    spacing: 8px;
+    font-size: 13px;
+    color: #374151;
+}
+QCheckBox::indicator {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #d1d5db;
+    border-radius: 4px;
+    background: #ffffff;
+}
+QCheckBox::indicator:checked {
+    background: #2563eb;
+    border-color: #2563eb;
+}
+"""
+
 
 from models import DataStore, Post, Category, Link, SiteInfo, slugify
 from publish import SiteBuilder, publish_mdblog
@@ -90,6 +454,7 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle('py2htmlblog — 静态博客生成器')
         self.setMinimumSize(900, 650)
+        self.setStyleSheet(MODERN_STYLESHEET)
         self._setup_ui()
         self._load_data()
 
@@ -98,33 +463,51 @@ class MainWindow(QMainWindow):
         central = QWidget()
         self.setCentralWidget(central)
         layout = QVBoxLayout(central)
+        layout.setContentsMargins(16, 12, 16, 12)
+        layout.setSpacing(12)
 
         # 顶部按钮栏
         top_bar = QHBoxLayout()
-        btn_build = QPushButton('构建站点')
+        top_bar.setContentsMargins(0, 0, 0, 8)
+
+        lbl_brand = QLabel('Blog Manager')
+        lbl_brand.setObjectName('sectionTitle')
+        top_bar.addWidget(lbl_brand)
+        top_bar.addSpacing(16)
+
+        btn_build = QPushButton('构建')
+        btn_build.setObjectName('btnPrimary')
+        btn_build.setToolTip('一键生成静态站点 HTML 文件')
         btn_build.clicked.connect(self.do_build)
-        btn_publish = QPushButton('导入并发布')
-        btn_publish.clicked.connect(self.do_publish)
-        btn_deploy = QPushButton('发布站点')
+        btn_deploy = QPushButton('发布')
+        btn_deploy.setObjectName('btnWarning')
+        btn_deploy.setToolTip('将构建好的站点发布到远程服务器')
         btn_deploy.clicked.connect(self.do_deploy)
-        btn_new = QPushButton('新建文章')
+        btn_new = QPushButton('+ 新建文章')
+        btn_new.setObjectName('btnSuccess')
         btn_new.clicked.connect(self.new_article)
         top_bar.addWidget(btn_build)
-        top_bar.addWidget(btn_publish)
         top_bar.addWidget(btn_deploy)
         top_bar.addWidget(btn_new)
         top_bar.addStretch()
         layout.addLayout(top_bar)
 
+        # 分隔线
+        sep = QFrame()
+        sep.setFrameShape(QFrame.HLine)
+        sep.setFrameShadow(QFrame.Sunken)
+        sep.setStyleSheet('QFrame { color: #e5e7eb; max-height: 1px; }')
+        layout.addWidget(sep)
+
         # 选项卡
-        tabs = QTabWidget()
-        tabs.addTab(self._tab_editor(), '文章创作')
-        tabs.addTab(self._tab_posts(), '文章列表')
-        tabs.addTab(self._tab_categories(), '分类管理')
-        tabs.addTab(self._tab_links(), '友链管理')
-        tabs.addTab(self._tab_settings(), '站点设置')
-        tabs.addTab(self._tab_deploy(), '发布设置')
-        layout.addWidget(tabs)
+        self.tabs = QTabWidget()
+        self.tabs.addTab(self._tab_editor(), '文章创作')
+        self.tabs.addTab(self._tab_posts(), '文章列表')
+        self.tabs.addTab(self._tab_categories(), '分类管理')
+        self.tabs.addTab(self._tab_links(), '友链管理')
+        self.tabs.addTab(self._tab_settings(), '站点设置')
+        self.tabs.addTab(self._tab_deploy(), '发布设置')
+        layout.addWidget(self.tabs)
 
         # 状态栏
         self.statusBar().showMessage('就绪')
@@ -185,14 +568,17 @@ class MainWindow(QMainWindow):
         # 底部按钮
         btn_layout = QHBoxLayout()
         btn_save = QPushButton('保存草稿')
+        btn_save.setToolTip('保存为草稿状态，不会显示在站点中')
         btn_save.clicked.connect(lambda: self.save_post(draft=True))
-        btn_publish = QPushButton('保存并发布')
-        btn_publish.clicked.connect(lambda: self.save_post(draft=False))
-        btn_preview = QPushButton('刷新预览')
-        btn_preview.clicked.connect(self.update_preview)
+        btn_pub = QPushButton('发布文章')
+        btn_pub.setObjectName('btnSuccess')
+        btn_pub.setToolTip('保存并设置为已发布状态')
+        btn_pub.clicked.connect(lambda: self.save_post(draft=False))
+        btn_prev = QPushButton('刷新预览')
+        btn_prev.clicked.connect(self.update_preview)
         btn_layout.addWidget(btn_save)
-        btn_layout.addWidget(btn_publish)
-        btn_layout.addWidget(btn_preview)
+        btn_layout.addWidget(btn_pub)
+        btn_layout.addWidget(btn_prev)
         btn_layout.addStretch()
         layout.addLayout(btn_layout)
 
@@ -207,14 +593,21 @@ class MainWindow(QMainWindow):
         self.post_table.setColumnCount(5)
         self.post_table.setHorizontalHeaderLabels(['ID', '日期', '标题', '分类', '状态'])
         self.post_table.horizontalHeader().setSectionResizeMode(2, QHeaderView.Stretch)
+        self.post_table.verticalHeader().setDefaultSectionSize(34)
+        self.post_table.verticalHeader().setSectionResizeMode(QHeaderView.Fixed)
         self.post_table.setSelectionBehavior(QTableWidget.SelectRows)
-        self.post_table.doubleClicked.connect(self.load_post_to_editor)
+        self.post_table.setEditTriggers(QTableWidget.NoEditTriggers)
+        self.post_table.setSelectionMode(QTableWidget.SingleSelection)
+        self.post_table.setFocusPolicy(Qt.NoFocus)
+        self.post_table.cellDoubleClicked.connect(self._on_post_cell_double_clicked)
+        self.post_table.itemChanged.connect(self._on_post_table_item_changed)
         layout.addWidget(self.post_table)
 
         btn_layout = QHBoxLayout()
         btn_edit = QPushButton('编辑选中')
         btn_edit.clicked.connect(self.edit_selected_post)
         btn_del = QPushButton('删除选中')
+        btn_del.setObjectName('btnDanger')
         btn_del.clicked.connect(self.delete_selected_post)
         btn_layout.addWidget(btn_edit)
         btn_layout.addWidget(btn_del)
@@ -236,7 +629,8 @@ class MainWindow(QMainWindow):
         self.cat_slug = QLineEdit()
         self.cat_slug.setPlaceholderText('留空自动')
         add_layout.addWidget(self.cat_slug)
-        btn_add = QPushButton('添加')
+        btn_add = QPushButton('+ 添加分类')
+        btn_add.setObjectName('btnSuccess')
         btn_add.clicked.connect(self.add_category)
         add_layout.addWidget(btn_add)
         layout.addLayout(add_layout)
@@ -244,9 +638,17 @@ class MainWindow(QMainWindow):
         self.cat_list = QListWidget()
         layout.addWidget(self.cat_list)
 
+        btn_layout = QHBoxLayout()
+        btn_edit = QPushButton('修改选中分类')
+        btn_edit.setObjectName('btnPrimary')
+        btn_edit.clicked.connect(self.edit_category)
         btn_del = QPushButton('删除选中分类')
+        btn_del.setObjectName('btnDanger')
         btn_del.clicked.connect(self.delete_category)
-        layout.addWidget(btn_del)
+        btn_layout.addWidget(btn_edit)
+        btn_layout.addWidget(btn_del)
+        btn_layout.addStretch()
+        layout.addLayout(btn_layout)
 
         return widget
 
@@ -265,7 +667,8 @@ class MainWindow(QMainWindow):
         add_layout.addWidget(QLabel('描述:'), 1, 0)
         self.link_desc = QLineEdit()
         add_layout.addWidget(self.link_desc, 1, 1, 1, 3)
-        btn_add = QPushButton('添加友链')
+        btn_add = QPushButton('+ 添加友链')
+        btn_add.setObjectName('btnSuccess')
         btn_add.clicked.connect(self.add_link)
         add_layout.addWidget(btn_add, 2, 3)
         layout.addLayout(add_layout)
@@ -274,11 +677,25 @@ class MainWindow(QMainWindow):
         self.link_table.setColumnCount(4)
         self.link_table.setHorizontalHeaderLabels(['ID', '名称', 'URL', '描述'])
         self.link_table.horizontalHeader().setSectionResizeMode(2, QHeaderView.Stretch)
+        self.link_table.verticalHeader().setDefaultSectionSize(34)
+        self.link_table.verticalHeader().setSectionResizeMode(QHeaderView.Fixed)
+        self.link_table.setSelectionBehavior(QTableWidget.SelectRows)
+        self.link_table.setEditTriggers(QTableWidget.DoubleClicked)
+        self.link_table.setSelectionMode(QTableWidget.SingleSelection)
+        self.link_table.setFocusPolicy(Qt.NoFocus)
         layout.addWidget(self.link_table)
 
+        btn_layout = QHBoxLayout()
+        btn_save = QPushButton('保存修改')
+        btn_save.setObjectName('btnPrimary')
+        btn_save.clicked.connect(self.save_link_changes)
         btn_del = QPushButton('删除选中友链')
+        btn_del.setObjectName('btnDanger')
         btn_del.clicked.connect(self.delete_link)
-        layout.addWidget(btn_del)
+        btn_layout.addWidget(btn_save)
+        btn_layout.addWidget(btn_del)
+        btn_layout.addStretch()
+        layout.addLayout(btn_layout)
 
         return widget
 
@@ -325,6 +742,7 @@ class MainWindow(QMainWindow):
         layout.addLayout(form)
 
         btn_save = QPushButton('保存设置')
+        btn_save.setObjectName('btnPrimary')
         btn_save.clicked.connect(self.save_settings)
         layout.addWidget(btn_save)
         layout.addStretch()
@@ -418,6 +836,7 @@ class MainWindow(QMainWindow):
         # 保存按钮
         btn_layout = QHBoxLayout()
         btn_save = QPushButton('保存发布设置')
+        btn_save.setObjectName('btnPrimary')
         btn_save.clicked.connect(self.save_deploy_settings)
         btn_layout.addWidget(btn_save)
         btn_layout.addStretch()
@@ -563,6 +982,7 @@ class MainWindow(QMainWindow):
 
     def _load_posts_table(self):
         posts = self.store.load_posts(include_draft=True)
+        self.post_table.blockSignals(True)
         self.post_table.setRowCount(len(posts))
         for i, p in enumerate(posts):
             self.post_table.setItem(i, 0, QTableWidgetItem(str(p.id)))
@@ -570,6 +990,7 @@ class MainWindow(QMainWindow):
             self.post_table.setItem(i, 2, QTableWidgetItem(p.title))
             self.post_table.setItem(i, 3, QTableWidgetItem(p.category))
             self.post_table.setItem(i, 4, QTableWidgetItem(p.status))
+        self.post_table.blockSignals(False)
 
     def _load_settings(self):
         info = self.store.load_info()
@@ -590,6 +1011,7 @@ class MainWindow(QMainWindow):
         self.edit_content.clear()
         self.preview.clear()
         self.current_post = None
+        self.tabs.setCurrentIndex(0)
         self.statusBar().showMessage('新建文章')
 
     def save_post(self, draft=False):
@@ -633,6 +1055,54 @@ class MainWindow(QMainWindow):
         post = self.store.find_post(post_id)
         if post:
             self.load_post_to_editor(post)
+            self.tabs.setCurrentIndex(0)
+
+    def _on_post_cell_double_clicked(self, row, col):
+        post_id = int(self.post_table.item(row, 0).text())
+        post = self.store.find_post(post_id)
+        if not post:
+            return
+
+        if col == 2:  # 双击标题 → 快速内联修改
+            self.post_table.editItem(self.post_table.item(row, 2))
+        elif col == 3:  # 双击分类 → 弹出分类选择对话框
+            cats = self.store.load_categories()
+            cat_names = [c.name for c in cats]
+            if not cat_names:
+                QMessageBox.warning(self, '提示', '暂无可用分类，请先添加分类')
+                return
+            current_idx = 0
+            for i, c in enumerate(cats):
+                if c.slug == post.category:
+                    current_idx = i
+                    break
+            item, ok = QInputDialog.getItem(
+                self, '修改分类', f'为文章 [{post_id}] "{post.title}" 选择新分类:',
+                cat_names, current_idx, False
+            )
+            if ok and item:
+                selected_cat = next((c for c in cats if c.name == item), None)
+                if selected_cat and selected_cat.slug != post.category:
+                    post.category = selected_cat.slug
+                    self.store.save_post(post)
+                    self._load_posts_table()
+                    self.statusBar().showMessage(f'文章 [{post_id}] 分类已更新为: {item}')
+
+    def _on_post_title_changed(self, item):
+        """文章标题内联修改后保存"""
+        row = item.row()
+        post_id = int(self.post_table.item(row, 0).text())
+        post = self.store.find_post(post_id)
+        if post:
+            new_title = item.text().strip()
+            if new_title and new_title != post.title:
+                post.title = new_title
+                self.store.save_post(post)
+                self.statusBar().showMessage(f'文章 [{post_id}] 标题已更新')
+
+    def _on_post_table_item_changed(self, item):
+        if item.column() == 2:
+            self._on_post_title_changed(item)
 
     def load_post_to_editor(self, item_or_post):
         if isinstance(item_or_post, Post):
@@ -710,6 +1180,60 @@ class MainWindow(QMainWindow):
             self._load_categories()
             self.statusBar().showMessage(f'已删除分类 {cat_id}')
 
+    def edit_category(self):
+        item = self.cat_list.currentItem()
+        if not item:
+            QMessageBox.warning(self, '提示', '请先选择一个分类')
+            return
+        cat_id = item.data(Qt.UserRole)
+        cats = self.store.load_categories()
+        cat = next((c for c in cats if c.id == cat_id), None)
+        if not cat:
+            return
+
+        dialog = QDialog(self)
+        dialog.setWindowTitle('修改分类')
+        dialog.setMinimumWidth(380)
+        layout = QFormLayout(dialog)
+
+        name_edit = QLineEdit(cat.name)
+        name_edit.setPlaceholderText('分类名称')
+        layout.addRow('名称:', name_edit)
+
+        slug_edit = QLineEdit(cat.slug)
+        slug_edit.setPlaceholderText('留空则自动翻译为英文别名')
+        layout.addRow('别名:', slug_edit)
+
+        hint = QLabel('留空则根据名称自动生成英文别名')
+        hint.setStyleSheet('color: #9ca3af; font-size: 11px; padding-left: 4px;')
+        layout.addRow('', hint)
+
+        buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        buttons.button(QDialogButtonBox.Ok).setText('确定')
+        buttons.button(QDialogButtonBox.Cancel).setText('取消')
+        buttons.accepted.connect(dialog.accept)
+        buttons.rejected.connect(dialog.reject)
+        layout.addRow(buttons)
+
+        if dialog.exec_() != QDialog.Accepted:
+            return
+
+        new_name = name_edit.text().strip()
+        if not new_name:
+            QMessageBox.warning(self, '提示', '分类名不能为空')
+            return
+
+        new_slug = slug_edit.text().strip()
+        if not new_slug:
+            new_slug = slugify(new_name)
+
+        cat.name = new_name
+        cat.slug = new_slug
+        self.store.save_categories(cats)
+        self._load_categories()
+        self._load_posts_table()
+        self.statusBar().showMessage(f'已更新分类: {new_name} (slug: {new_slug})')
+
     # ── 友链操作 ───────────────────────────────────────────
     def add_link(self):
         name = self.link_name.text().strip()
@@ -743,6 +1267,33 @@ class MainWindow(QMainWindow):
             self.store.save_links(links)
             self._load_links()
             self.statusBar().showMessage(f'已删除友链 {link_id}')
+
+    def save_link_changes(self):
+        """保存友链表格中的所有修改"""
+        links = self.store.load_links()
+        updated = 0
+        for i in range(self.link_table.rowCount()):
+            try:
+                link_id = int(self.link_table.item(i, 0).text())
+            except (AttributeError, ValueError):
+                continue
+            for lnk in links:
+                if lnk.id == link_id:
+                    name = self.link_table.item(i, 1).text().strip() if self.link_table.item(i, 1) else ''
+                    url = self.link_table.item(i, 2).text().strip() if self.link_table.item(i, 2) else ''
+                    desc = self.link_table.item(i, 3).text().strip() if self.link_table.item(i, 3) else ''
+                    if name and url:
+                        lnk.name = name
+                        lnk.url = url
+                        lnk.description = desc
+                        updated += 1
+                    break
+        if updated > 0:
+            self.store.save_links(links)
+            self._load_links()
+            self.statusBar().showMessage(f'已保存 {updated} 条友链修改')
+        else:
+            self.statusBar().showMessage('没有检测到修改')
 
     # ── 设置操作 ───────────────────────────────────────────
     def save_settings(self):

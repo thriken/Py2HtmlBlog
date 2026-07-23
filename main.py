@@ -5,8 +5,7 @@ main.py  —  py2htmlblog 静态博客生成器  主程序入口
 
 用法：
   python main.py init <站点名> <站点URL> <作者>        初始化站点
-  python main.py build                                  构建静态站点
-  python main.py publish                                导入 mdblog 并构建
+  python main.py build                                  导入 mdblog 并构建静态站点
   python main.py new <标题> [--cat <分类>] [--tags <标签>]   新建文章
   python main.py new page <标题> --slug <别名>         新建独立页面
   python main.py list posts                             列出文章
@@ -45,18 +44,10 @@ def cmd_init(args):
 
 
 def cmd_build(args):
-    from publish import SiteBuilder
-    builder = SiteBuilder(get_project_dir())
-    builder.build()
-
-
-def cmd_publish(args):
     from publish import SiteBuilder, publish_mdblog
-    # 先导入 mdblog 文章
     count = publish_mdblog(get_project_dir())
     if count:
-        print(f'  导入 {count} 篇文章')
-    # 然后构建站点
+        print(f'  导入 {count} 篇待发布文章')
     builder = SiteBuilder(get_project_dir())
     builder.build()
 
@@ -191,12 +182,8 @@ def build_parser():
     p_init.set_defaults(func=cmd_init)
 
     # build
-    p_build = sub.add_parser('build', help='构建静态站点')
+    p_build = sub.add_parser('build', help='导入 mdblog 并构建静态站点')
     p_build.set_defaults(func=cmd_build)
-
-    # publish
-    p_pub = sub.add_parser('publish', help='导入 mdblog 文章并构建站点')
-    p_pub.set_defaults(func=cmd_publish)
 
     # new
     p_new = sub.add_parser('new', help='新建文章或页面')
@@ -263,7 +250,7 @@ def main():
         return
 
     print('╔══════════════════════════════════════╗')
-    print('║   py2htmlblog 静态博客生成器          ║')
+    print('║   py2htmlblog 静态博客生成器         ║')
     print('╚══════════════════════════════════════╝')
     args.func(args)
 
