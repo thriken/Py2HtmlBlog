@@ -1,0 +1,92 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+		<title>{{ site_name }} : {{ page_title }}</title>
+		<link rel="stylesheet" href="{{ site_url }}/styles-site.css" type="text/css" />    
+	</head>
+	<body>
+
+    <div id="banner">
+		<h1>{{ site_name }}</h1>
+		<span class="description">{{ page_title }}</span>
+    </div>
+
+
+
+	<div id="content">
+		<div class="blog">
+<!-- back and forward -->
+<p align="center">
+{% if prev_page %}
+
+<a href="{{ prev_url }}">&laquo; {{ prev_title }}</a> |
+
+{% endif %}
+<a href="{{ site_url }}/index.html">Main</a>
+{% if next_page %}
+
+| <a href="{{ prev_url }}">{{ prev_title }} &raquo;</a>
+
+{% endif %}
+</p>
+		<!-- This section specifies the layout for each entry -->
+		{% for p in page_posts %}
+				
+		<div class="blogbody">
+			<a name="{{ post.id }}"></a>
+			
+			<h3 class="title">{{ post.title }}</h3>
+			
+			{{ post.content_html|safe }}
+			<div class="posted">
+				Posted by <a href="mailto:">{{ author }}</a> at {{ post.date_str }}</a><br>
+				{% if p.modified %}<i>Edited on: </i><br>{% endif %}
+				Categories: <a href="{{ site_url }}/archives/cat_{{ p.category_slug }}.html">{{ p.category_name }}</a><br>
+			</div>
+		</div>
+		{% endfor %}	
+
+
+		</div><!--end blog -->
+	</div> <!-- end content -->
+    
+	<!-- sidebar begin -->
+    <div id="links">
+		<p></p>
+		<div class="syndicate">
+			<a href="{{ site_url }}/index.html">Front Page</a><br />
+			<a href="{{ site_url }}/rss.xml">Syndicate this site (XML)</a>
+		</div>
+     
+      
+		<!-- Category links list -->
+		<div class="sidetitle">
+			Categories
+		</div>
+
+		<div class="side">
+		{% for c in categories %}
+			<a href="{{ site_url }}/archives/cat_{{ c.slug }}.html">{{ c.name }}</a><br />
+		{% endfor %}
+		</div>      
+
+
+		<div class="sidetitle">
+			Credits
+		</div>
+		<div class="side"><!--REQUIRED LINK!!!! do not delete! -->
+			<a href="http://www.movablestyle.com/">Design by Movablestyle</a><br />        
+		</div>
+      
+      
+		<div class="powered">
+			Powered by<br /><a href="http://www.thingamablog.com">Thingamablog 1.5.1</a><br />    
+		</div>
+ 
+
+	</div>
+    <br clear="all" />
+    {{ footer_code|safe }}
+</body>
+</html>

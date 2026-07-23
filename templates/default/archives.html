@@ -1,0 +1,25 @@
+{% include "header.html" %}
+
+<h1 class="page-title">Archives</h1>
+
+{% if archives %}
+<div class="archive-list">
+{% for a in archives %}
+<section class="archive-group">
+	<h2 class="archive-year-month">{{ a.label }} <span class="count">({{ a.count }})</span></h2>
+	<ul class="archive-posts">
+		{% for post in a.posts %}
+		<li>
+			<time datetime="{{ post.date_str }}">{{ post.date_str }}</time>
+			<a href="{{ site_url }}/{{ post.entry_url }}">{{ post.title }}</a>
+		</li>
+		{% endfor %}
+	</ul>
+</section>
+{% endfor %}
+</div>
+{% else %}
+<p class="empty">No posts yet.</p>
+{% endif %}
+
+{% include "footer.html" %}

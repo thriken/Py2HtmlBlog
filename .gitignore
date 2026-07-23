@@ -1,0 +1,38 @@
+# 个人数据目录（博客文章 / 配置 / 页面）
+data/
+
+# 生成产物
+wwwroot/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+*.egg
+
+# 工具本地数据
+.workbuddy/
+
+# 虚拟环境
+venv/
+.venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 备份文件
+*.bak
+*~
+
+# 日志
+*.log

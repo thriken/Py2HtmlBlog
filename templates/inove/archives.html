@@ -1,0 +1,51 @@
+{% include 'header.html' %}
+	<!-- main START -->
+	<div id="main">
+
+		<div class="post" id="post-19">
+			<h2>{{ site_name }}</h2>
+			<div class="info">
+				<div class="act">
+					<div class="fixed"></div>
+				</div>
+				<div class="fixed"></div>
+			</div>
+			<div class="content">
+				<p>{{ tagline }}</p>
+				<p>共 {{ post_count }} 篇文章</p>
+				<p class="under"></p>
+				<div class="fixed"></div>
+			</div>
+		</div>
+
+		<div class="post">
+			<h2>文章归档</h2>
+			<div class="content">
+				<ul>
+				{% for a in archives %}
+				<li>
+					<a href="{{ site_url }}/archives/{{ a.from_slug }}_{{ a.to_slug }}.html">{{ a.year }} {{ a.month_name }}</a> ({{ a.count }} 篇)
+				</li>
+				{% endfor %}
+				</ul>
+				<p class="under"></p>
+				<div class="fixed"></div>
+			</div>
+		</div>
+
+		<div class="post">
+			<h2>分类</h2>
+			<div class="content">
+				<ul>
+				{% for c in categories %}
+				<li><a href="{{ site_url }}/archives/cat_{{ c.slug }}.html">{{ c.name }}</a></li>
+				{% endfor %}
+				</ul>
+				<p class="under"></p>
+				<div class="fixed"></div>
+			</div>
+		</div>
+
+	</div>
+	<!-- main END -->
+{% include 'footer.html' %}

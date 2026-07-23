@@ -1,0 +1,59 @@
+{% include "header.html" %}
+
+<article class="post-full">
+	<header class="post-header">
+		<h1 class="post-title">{{ post.title }}</h1>
+		<div class="post-meta">
+			<time datetime="{{ post.date_str }}">{{ post.date_str }}</time>
+			{% if post.category_name %}
+			&middot; <a href="{{ site_url }}/archives/cat_{{ post.category_slug }}.html" class="post-cat">{{ post.category_name }}</a>
+			{% endif %}
+		</div>
+	</header>
+
+	<div class="post-content">
+		{{ post.content_html | raw }}
+
+		{% if post.quotes %}
+		<blockquote class="post-quote">{{ post.quotes }}</blockquote>
+		{% endif %}
+	</div>
+
+	<footer class="post-footer">
+		{% if post.tags %}
+		<div class="post-tags">
+			{% for t in post.tag_links %}
+			<a href="{{ site_url }}/{{ t.url }}" class="tag-link">{{ t.name }}</a>
+			{% endfor %}
+		</div>
+		{% endif %}
+
+		<nav class="post-nav">
+			{% if prev_post %}
+			<a href="{{ site_url }}/{{ prev_url }}" class="post-nav-prev" title="{{ prev_post.title }}">&larr; {{ prev_post.title }}</a>
+			{% endif %}
+			{% if next_post %}
+			<a href="{{ site_url }}/{{ next_url }}" class="post-nav-next" title="{{ next_post.title }}">{{ next_post.title }} &rarr;</a>
+			{% endif %}
+		</nav>
+	</footer>
+
+	{% if near_posts %}
+	<section class="related-posts">
+		<h3>Related Posts</h3>
+		<ul>
+			{% for np in near_posts %}
+			<li><a href="{{ site_url }}/{{ np.entry_url }}">{{ np.title }}</a></li>
+			{% endfor %}
+		</ul>
+	</section>
+	{% endif %}
+
+	{% if comment_code %}
+	<section class="post-comments">
+		{{ comment_code | raw }}
+	</section>
+	{% endif %}
+</article>
+
+{% include "footer.html" %}

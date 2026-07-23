@@ -1,0 +1,24 @@
+{% include "header.html" %}
+
+<h1 class="page-title">{{ archive.label }}</h1>
+
+{% for post in month_posts %}
+<article class="post-card">
+	<header class="post-header">
+		<h2 class="post-title"><a href="{{ site_url }}/{{ post.entry_url }}">{{ post.title }}</a></h2>
+		<div class="post-meta">
+			<time datetime="{{ post.date_str }}">{{ post.date_str }}</time>
+		</div>
+	</header>
+	<div class="post-excerpt">
+		{{ post.excerpt }}
+	</div>
+	<a href="{{ site_url }}/{{ post.entry_url }}" class="read-more">Read more &rarr;</a>
+</article>
+{% endfor %}
+
+{% if not month_posts %}
+<p class="empty">No posts in this month.</p>
+{% endif %}
+
+{% include "footer.html" %}

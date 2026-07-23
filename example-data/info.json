@@ -1,0 +1,48 @@
+{
+  "site_name": "My Blog",
+  "tagline": "A static blog powered by Py2HtmlBlog",
+  "description": "My personal blog - built with Py2HtmlBlog",
+  "site_url": "https://example.github.io",
+  "author": "Your Name",
+  "author_email": "you@example.com",
+  "language": "zh-CN",
+  "timezone": "Asia/Shanghai",
+  "template": "default",
+  "next_post_id": 1,
+  "posts_per_page": 10,
+  "rss_count": 20,
+  "copyright": "Copyright 2026 My Blog",
+  "comment_code": "",
+  "footer_code": "",
+  "nav_pages": [
+    {
+      "title": "About",
+      "url": "/about.html"
+    }
+  ],
+  "deploy": {
+    "method": "git",
+    "ftp": {
+      "host": "",
+      "port": 21,
+      "user": "",
+      "password": "",
+      "remote_dir": "/"
+    },
+    "sftp": {
+      "host": "",
+      "port": 22,
+      "user": "",
+      "password": "",
+      "key_file": "",
+      "remote_dir": "/"
+    },
+    "git": {
+      "remote": "origin",
+      "branch": "gh-pages",
+      "repo_dir": "",
+      "commit_message": "Site update: {{date}}",
+      "sub_dir": ""
+    }
+  }
+}

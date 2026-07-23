@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="{{ language }}">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>{% if page_title and page_title != site_name %}{{ page_title }} — {{ site_name }}{% else %}{{ site_name }}{% endif %}</title>
+	<meta name="description" content="{{ site.description }}" />
+	<meta name="author" content="{{ author }}" />
+	<link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="{{ site_url }}/rss.xml" />
+	<link rel="stylesheet" href="{{ site.url }}/css/style.css" />
+</head>
+<body>
+
+<header class="site-header">
+	<div class="container">
+		<div class="site-branding">
+			<h1 class="site-title"><a href="{{ site_url }}/index.html">{{ site_name }}</a></h1>
+			{% if tagline %}<p class="site-tagline">{{ tagline }}</p>{% endif %}
+		</div>
+		<nav class="site-nav">
+			<a href="{{ site_url }}/index.html" class="nav-link">Home</a>
+			{% if categories %}<a href="{{ site_url }}/categories.html" class="nav-link">Categories</a>{% endif %}
+			{% if all_tags %}<a href="{{ site_url }}/tags.html" class="nav-link">Tags</a>{% endif %}
+			<a href="{{ site_url }}/archives.html" class="nav-link">Archives</a>
+			{% for page in nav_pages %}
+			<a href="{{ page.url }}" class="nav-link">{{ page.title }}</a>
+			{% endfor %}
+			<a href="{{ site_url }}/rss.xml" class="nav-link nav-rss" title="RSS Feed">RSS</a>
+		</nav>
+	</div>
+</header>
+
+<main class="site-main">
+	<div class="container">

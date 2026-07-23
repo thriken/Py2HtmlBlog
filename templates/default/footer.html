@@ -1,0 +1,63 @@
+	</div>
+</main>
+
+<footer class="site-footer">
+	<div class="container">
+		<div class="footer-widgets">
+			{% if categories %}
+			<div class="footer-widget">
+				<h4>Categories</h4>
+				<ul>
+					{% for c in categories %}
+					<li><a href="{{ site_url }}/archives/cat_{{ c.slug }}.html">{{ c.name }}</a></li>
+					{% endfor %}
+				</ul>
+			</div>
+			{% endif %}
+			{% if all_tags %}
+			<div class="footer-widget">
+				<h4>Tags</h4>
+				<div class="tag-cloud">
+					{% for t in all_tags %}
+					<a href="{{ site_url }}/archives/tag_{{ t.slug }}.html">{{ t.name }}<sup>{{ t.count }}</sup></a>
+					{% endfor %}
+				</div>
+			</div>
+			{% endif %}
+			{% if links %}
+			<div class="footer-widget">
+				<h4>Links</h4>
+				<ul>
+					{% for l in links %}
+					<li><a href="{{ l.url }}" target="_blank" title="{{ l.description }}">{{ l.name }}</a></li>
+					{% endfor %}
+				</ul>
+			</div>
+			{% endif %}
+		</div>
+		<div class="footer-bottom">
+			<p class="copyright">{{ copyright }}</p>
+			<p class="powered">Powered by <a href="https://github.com">py2htmlblog</a> &middot; <a href="{{ site_url }}/rss.xml">RSS</a></p>
+		</div>
+	</div>
+
+	<a href="#" class="back-to-top" id="backToTop" title="回到顶部">&uarr;</a>
+</footer>
+
+{{ footer_code|raw }}
+
+<script>
+(function() {
+	var btn = document.getElementById('backToTop');
+	window.addEventListener('scroll', function() {
+		btn.style.display = window.scrollY > 400 ? 'block' : 'none';
+	});
+	btn.addEventListener('click', function(e) {
+		e.preventDefault();
+		window.scrollTo({ top: 0, behavior: 'smooth' });
+	});
+})();
+</script>
+
+</body>
+</html>

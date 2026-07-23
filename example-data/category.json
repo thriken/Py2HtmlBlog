@@ -1,0 +1,17 @@
+[
+  {
+    "id": 1,
+    "name": "技术",
+    "slug": "tech"
+  },
+  {
+    "id": 2,
+    "name": "生活",
+    "slug": "life"
+  },
+  {
+    "id": 3,
+    "name": "笔记",
+    "slug": "notes"
+  }
+]

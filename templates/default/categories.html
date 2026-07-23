@@ -1,0 +1,17 @@
+{% include "header.html" %}
+
+<h1 class="page-title">Categories</h1>
+
+{% if categories %}
+<div class="category-grid">
+{% for c in categories %}
+<a href="{{ site_url }}/archives/cat_{{ c.slug }}.html" class="category-card">
+	<span class="category-name">{{ c.name }}</span>
+</a>
+{% endfor %}
+</div>
+{% else %}
+<p class="empty">No categories yet.</p>
+{% endif %}
+
+{% include "footer.html" %}
