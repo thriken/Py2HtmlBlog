@@ -1,7 +1,7 @@
 # py2htmlblog — 静态博客生成器
 
 > 模仿 ThingamaBlog 原理，使用 Python 编写的静态博客生成器。
-> 支持模板引擎、Markdown 写作、分类/标签管理、RSS 订阅、sitemap.xml 生成、多种主题模板（含 iNove 和 17 套 ThingamaBlog 原装模板）、ZIP 模板包、PyQt 图形界面。
+> 支持模板引擎、Markdown 写作、分类/标签管理、RSS 订阅、sitemap.xml 生成、多种主题模板（含 iNove 和 5 套 ThingamaBlog 原装模板）、ZIP 模板包、PyQt 图形界面。
 
 - language: en, zh-cn
 - skill: html, css, js, template-engine, GUI 环境选择 pyqt
