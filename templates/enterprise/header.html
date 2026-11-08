@@ -6,9 +6,9 @@
 	<title>{% if page_title and page_title != site_name %}{{ page_title }} — {{ site_name }}{% else %}{{ site_name }}{% endif %}</title>
 	<meta name="description" content="{{ site.description }}" />
 	<meta name="author" content="{{ author }}" />
-	<link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="{{ site_url }}/rss.xml" />
-	<link rel="stylesheet" href="{{ site_url }}/css/style.css" />
-	<link rel="stylesheet" href="{{ site_url }}/css/theme-light.css" />
+	<link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="/rss.xml" />
+	<link rel="stylesheet" href="/css/style.css" />
+	<link rel="stylesheet" href="/css/theme-light.css" />
 	<script>
 	/* 首屏前应用配色，避免闪烁；完整逻辑见 js/theme.js */
 	(function () {
@@ -20,33 +20,33 @@
 		document.documentElement.setAttribute('data-theme', d);
 	})();
 	</script>
-	<script defer src="{{ site_url }}/js/theme.js"></script>
+	<script defer src="/js/theme.js"></script>
 </head>
 <body>
 
 <header class="header" id="siteHeader">
 	<div class="container">
-		<a href="{{ site_url }}/index.html" class="logo">
+		<a href="/index.html" class="logo">
 			<span class="logo-mark">&#9672;</span>
 			<span class="gradient-text">{{ site_name }}</span>
 		</a>
 
 		<nav class="nav-menu" id="navMenu">
-			<a href="{{ site_url }}/index.html" class="{% if page_title == '首页' %}active{% endif %}">首页</a>
-			{% if categories %}<a href="{{ site_url }}/categories.html">分类</a>{% endif %}
-			{% if all_tags %}<a href="{{ site_url }}/tags.html">标签</a>{% endif %}
-			<a href="{{ site_url }}/archives.html">归档</a>
+			<a href="/index.html" class="{% if page_title == '首页' %}active{% endif %}">首页</a>
+			{% if categories %}<a href="/categories.html">分类</a>{% endif %}
+			{% if all_tags %}<a href="/tags.html">标签</a>{% endif %}
+			<a href="/archives.html">归档</a>
 			{% for page in nav_pages %}
 			<a href="{{ page.url }}">{{ page.title }}</a>
 			{% endfor %}
-			<a href="{{ site_url }}/rss.xml">RSS</a>
+			<a href="/rss.xml">RSS</a>
 		</nav>
 
 		<div class="nav-actions">
 			<button type="button" class="theme-toggle" id="themeToggle" title="切换配色" aria-label="切换配色">
 				<span class="theme-icon-moon">&#9789;</span><span class="theme-icon-sun">&#9728;</span>
 			</button>
-			<a href="{{ site_url }}/archives.html" class="btn btn-primary btn-sm">浏览文章</a>
+			<a href="/archives.html" class="btn btn-primary btn-sm">浏览文章</a>
 			<button type="button" class="menu-toggle" id="menuToggle" aria-label="菜单">
 				<span></span><span></span><span></span>
 			</button>

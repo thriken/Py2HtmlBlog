@@ -13,7 +13,7 @@
 		{% if categories %}
 		<div class="category-grid">
 			{% for c in categories %}
-			<a href="{{ site_url }}/archives/cat_{{ c.slug }}.html" class="category-card">{{ c.name }}</a>
+			<a href="/archives/cat_{{ c.slug }}.html" class="category-card">{{ c.name }}</a>
 			{% endfor %}
 		</div>
 		{% else %}

@@ -9,15 +9,15 @@
 				<p>你访问的页面不存在或已被移动。</p>
 			</div>
 			<div class="error-actions">
-				<a href="{{ site_url }}/index.html" class="btn btn-primary">&larr; 返回首页</a>
-				<a href="{{ site_url }}/archives.html" class="btn btn-outline">浏览归档</a>
+				<a href="/index.html" class="btn btn-primary">&larr; 返回首页</a>
+				<a href="/archives.html" class="btn btn-outline">浏览归档</a>
 			</div>
 			{% if recent_posts %}
 			<div class="error-suggestions">
 				<h3>最近文章</h3>
 				<ul>
 					{% for p in recent_posts %}
-					<li><a href="{{ site_url }}/{{ p.entry_url }}">{{ p.title }}</a></li>
+					<li><a href="/{{ p.entry_url }}">{{ p.title }}</a></li>
 					{% endfor %}
 				</ul>
 			</div>

@@ -23,17 +23,17 @@
 				{% if post.tags %}
 				<div class="post-tags">
 					{% for t in post.tag_links %}
-					<a href="{{ site_url }}/{{ t.url }}" class="tag-link"># {{ t.name }}</a>
+					<a href="/{{ t.url }}" class="tag-link"># {{ t.name }}</a>
 					{% endfor %}
 				</div>
 				{% endif %}
 
 				<nav class="post-nav">
 					{% if prev_post %}
-					<a href="{{ site_url }}/{{ prev_url }}" class="post-nav-prev">&larr; {{ prev_post.title }}</a>
+					<a href="/{{ prev_url }}" class="post-nav-prev">&larr; {{ prev_post.title }}</a>
 					{% endif %}
 					{% if next_post %}
-					<a href="{{ site_url }}/{{ next_url }}" class="post-nav-next">{{ next_post.title }} &rarr;</a>
+					<a href="/{{ next_url }}" class="post-nav-next">{{ next_post.title }} &rarr;</a>
 					{% endif %}
 				</nav>
 
@@ -42,7 +42,7 @@
 					<h3>相关文章</h3>
 					<ul>
 						{% for np in near_posts %}
-						<li><a href="{{ site_url }}/{{ np.entry_url }}">{{ np.title }}</a></li>
+						<li><a href="/{{ np.entry_url }}">{{ np.title }}</a></li>
 						{% endfor %}
 					</ul>
 				</div>

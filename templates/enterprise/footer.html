@@ -5,8 +5,8 @@
 		<h2>保持关注，持续更新</h2>
 		<p>订阅 RSS，第一时间获取最新内容</p>
 		<div class="cta-buttons">
-			<a href="{{ site_url }}/archives.html" class="btn btn-primary">浏览归档</a>
-			<a href="{{ site_url }}/rss.xml" class="btn btn-outline">订阅 RSS</a>
+			<a href="/archives.html" class="btn btn-primary">浏览归档</a>
+			<a href="/rss.xml" class="btn btn-outline">订阅 RSS</a>
 		</div>
 	</div>
 </section>
@@ -15,7 +15,7 @@
 	<div class="container">
 		<div class="footer-grid">
 			<div class="footer-brand">
-				<a href="{{ site_url }}/index.html" class="logo">
+				<a href="/index.html" class="logo">
 					<span class="logo-mark">&#9672;</span>
 					<span class="gradient-text">{{ site_name }}</span>
 				</a>
@@ -27,7 +27,7 @@
 				<h4>分类导航</h4>
 				<div class="footer-links">
 					{% for c in categories %}
-					<a href="{{ site_url }}/archives/cat_{{ c.slug }}.html">{{ c.name }}</a>
+					<a href="/archives/cat_{{ c.slug }}.html">{{ c.name }}</a>
 					{% endfor %}
 				</div>
 			</div>
@@ -36,9 +36,9 @@
 			<div class="footer-col">
 				<h4>站点导航</h4>
 				<div class="footer-links">
-					<a href="{{ site_url }}/index.html">首页</a>
-					<a href="{{ site_url }}/archives.html">文章归档</a>
-					{% if all_tags %}<a href="{{ site_url }}/tags.html">标签云</a>{% endif %}
+					<a href="/index.html">首页</a>
+					<a href="/archives.html">文章归档</a>
+					{% if all_tags %}<a href="/tags.html">标签云</a>{% endif %}
 					{% for page in nav_pages %}
 					<a href="{{ page.url }}">{{ page.title }}</a>
 					{% endfor %}
@@ -53,7 +53,7 @@
 						<a href="{{ l.url }}" target="_blank" rel="noopener" title="{{ l.description }}">{{ l.name }}</a>
 						{% endfor %}
 					{% else %}
-						<a href="{{ site_url }}/rss.xml">RSS 订阅</a>
+						<a href="/rss.xml">RSS 订阅</a>
 					{% endif %}
 				</div>
 			</div>
@@ -61,7 +61,7 @@
 
 		<div class="footer-bottom">
 			<p>{{ copyright }} &middot; &copy; {{ build_year }} {{ site_name }}</p>
-			<p>Powered by <a href="https://github.com">py2htmlblog</a> &middot; <a href="{{ site_url }}/rss.xml">RSS</a></p>
+			<p>Powered by <a href="https://github.com">py2htmlblog</a> &middot; <a href="/rss.xml">RSS</a></p>
 		</div>
 	</div>
 </footer>

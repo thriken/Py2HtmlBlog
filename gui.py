@@ -17,9 +17,13 @@ gui.py  —  PyQt5 图形界面
 
 import os
 import sys
+import webbrowser
+import zipfile
 from datetime import datetime
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+from mhttpd import PreviewServer
 
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QGridLayout,
@@ -399,6 +403,46 @@ from models import DataStore, Post, Category, Link, SiteInfo, slugify
 from publish import SiteBuilder, publish_mdblog
 
 
+def discover_templates(templates_dir):
+    """扫描 templates/ 目录，返回可用主题 [(名称, 来源), ...]。
+
+    目录优先于同名 ZIP；仅收录包含 .html/.xml 模板文件的主题。
+    """
+    if not os.path.isdir(templates_dir):
+        return []
+    try:
+        entries = os.listdir(templates_dir)
+    except OSError:
+        return []
+
+    found = {}
+    for name in entries:
+        path = os.path.join(templates_dir, name)
+        if not os.path.isdir(path) or name.startswith('.'):
+            continue
+        try:
+            has_template = any(f.lower().endswith(('.html', '.xml')) for f in os.listdir(path))
+        except OSError:
+            continue
+        if has_template:
+            found[name] = '目录'
+
+    for name in entries:
+        if not name.lower().endswith('.zip'):
+            continue
+        theme = name[:-4]
+        if not theme or theme in found:
+            continue
+        try:
+            with zipfile.ZipFile(os.path.join(templates_dir, name)) as zf:
+                if any(n.lower().endswith(('.html', '.xml')) for n in zf.namelist()):
+                    found[theme] = 'ZIP 包'
+        except (zipfile.BadZipFile, OSError):
+            continue
+
+    return sorted(found.items())
+
+
 class BuildThread(QThread):
     """后台构建线程"""
     message = pyqtSignal(str)
@@ -451,6 +495,7 @@ class MainWindow(QMainWindow):
         self.data_dir = os.path.join(project_dir, 'data')
         self.store = DataStore(self.data_dir)
         self.current_post = None
+        self._preview_server = PreviewServer(os.path.join(project_dir, 'wwwroot'))
 
         self.setWindowTitle('py2htmlblog — 静态博客生成器')
         self.setMinimumSize(900, 650)
@@ -486,9 +531,13 @@ class MainWindow(QMainWindow):
         btn_new = QPushButton('+ 新建文章')
         btn_new.setObjectName('btnSuccess')
         btn_new.clicked.connect(self.new_article)
+        self.btn_preview = QPushButton('预览站点')
+        self.btn_preview.setToolTip('启动本地预览服务器，在浏览器中查看 wwwroot/ 构建结果')
+        self.btn_preview.clicked.connect(self.toggle_preview)
         top_bar.addWidget(btn_build)
         top_bar.addWidget(btn_deploy)
         top_bar.addWidget(btn_new)
+        top_bar.addWidget(self.btn_preview)
         top_bar.addStretch()
         layout.addLayout(top_bar)
 
@@ -509,7 +558,11 @@ class MainWindow(QMainWindow):
         self.tabs.addTab(self._tab_deploy(), '发布设置')
         layout.addWidget(self.tabs)
 
-        # 状态栏
+        # 状态栏：右侧常驻显示预览地址（可点击打开）
+        self.preview_status = QLabel('')
+        self.preview_status.setOpenExternalLinks(True)
+        self.preview_status.setTextInteractionFlags(Qt.LinksAccessibleByMouse)
+        self.statusBar().addPermanentWidget(self.preview_status)
         self.statusBar().showMessage('就绪')
 
     # ── 文章创作选项卡 ─────────────────────────────────────
@@ -722,6 +775,20 @@ class MainWindow(QMainWindow):
         ]
         for i, (key, label) in enumerate(fields):
             form.addWidget(QLabel(label), i, 0)
+            if key == 'template':
+                edit = QComboBox()
+                edit.setToolTip('从 templates/ 中已安装的主题里选择')
+                self.combo_template = edit
+                tpl_row = QHBoxLayout()
+                tpl_row.addWidget(edit, 1)
+                btn_refresh = QPushButton('刷新')
+                btn_refresh.setMaximumWidth(72)
+                btn_refresh.setToolTip('重新扫描 templates/ 目录中的可用主题')
+                btn_refresh.clicked.connect(self._refresh_template_list)
+                tpl_row.addWidget(btn_refresh)
+                form.addLayout(tpl_row, i, 1)
+                self.set_fields[key] = edit
+                continue
             edit = QLineEdit()
             form.addWidget(edit, i, 1)
             self.set_fields[key] = edit
@@ -992,10 +1059,38 @@ class MainWindow(QMainWindow):
             self.post_table.setItem(i, 4, QTableWidgetItem(p.status))
         self.post_table.blockSignals(False)
 
+    def _fill_template_combo(self, current_value=''):
+        """重新扫描 templates/ 并填充模板下拉框，返回可用主题数量"""
+        combo = self.set_fields.get('template')
+        if not isinstance(combo, QComboBox):
+            return 0
+        value = current_value or combo.currentText()
+        combo.blockSignals(True)
+        combo.clear()
+        templates = discover_templates(os.path.join(self.project_dir, 'templates'))
+        for name, source in templates:
+            combo.addItem(name)
+            combo.setItemData(combo.count() - 1, f'{name} · {source}', Qt.ToolTipRole)
+        # 配置中的值不在磁盘上时仍保留，避免保存时意外清空
+        if value and combo.findText(value) < 0:
+            combo.insertItem(0, value)
+            combo.setItemData(0, '当前配置值：templates/ 中未找到该主题', Qt.ToolTipRole)
+        if value:
+            combo.setCurrentText(value)
+        combo.blockSignals(False)
+        return len(templates)
+
+    def _refresh_template_list(self):
+        count = self._fill_template_combo()
+        self.statusBar().showMessage(f'已扫描 templates/，找到 {count} 套可用主题')
+
     def _load_settings(self):
         info = self.store.load_info()
         d = info.to_dict()
+        self._fill_template_combo(str(d.get('template', '') or ''))
         for key, edit in self.set_fields.items():
+            if key == 'template':
+                continue
             if isinstance(edit, QLineEdit):
                 edit.setText(str(d.get(key, '')))
             elif isinstance(edit, QTextEdit):
@@ -1299,7 +1394,9 @@ class MainWindow(QMainWindow):
     def save_settings(self):
         info = self.store.load_info()
         for key, edit in self.set_fields.items():
-            if isinstance(edit, QLineEdit):
+            if isinstance(edit, QComboBox):
+                setattr(info, key, edit.currentText().strip())
+            elif isinstance(edit, QLineEdit):
                 val = edit.text().strip()
                 if key in ('next_post_id', 'posts_per_page', 'rss_count'):
                     try:
@@ -1312,6 +1409,53 @@ class MainWindow(QMainWindow):
         self.store.save_info(info)
         self.statusBar().showMessage('站点设置已保存')
         QMessageBox.information(self, '成功', '站点设置已保存')
+
+    # ── 本地预览服务器 ─────────────────────────────────────
+    @staticmethod
+    def _set_button_style(button, name):
+        """动态切换 objectName 后强制重新应用 QSS"""
+        button.setObjectName(name)
+        button.style().unpolish(button)
+        button.style().polish(button)
+        button.update()
+
+    def toggle_preview(self):
+        if self._preview_server.is_running:
+            self._stop_preview()
+        else:
+            self._start_preview()
+
+    def _start_preview(self):
+        wwwroot = self._preview_server.root_dir
+        if not os.path.isfile(os.path.join(wwwroot, 'index.html')):
+            QMessageBox.warning(
+                self, '提示',
+                '尚未找到构建结果 wwwroot/index.html。\n请先点击「构建」生成站点。')
+            return
+        try:
+            url = self._preview_server.start(preferred_port=8000)
+        except Exception as e:
+            QMessageBox.critical(self, '错误', f'预览服务器启动失败:\n{e}')
+            return
+
+        self.btn_preview.setText('停止预览')
+        self._set_button_style(self.btn_preview, 'btnDanger')
+        self.preview_status.setText(f'预览中 · <a href="{url}">{url}</a>')
+        self.statusBar().showMessage(f'本地预览已启动: {url}')
+        webbrowser.open(url)
+
+    def _stop_preview(self):
+        self._preview_server.stop()
+        self.btn_preview.setText('预览站点')
+        self._set_button_style(self.btn_preview, '')
+        self.preview_status.setText('')
+        self.statusBar().showMessage('预览服务器已停止')
+
+    def closeEvent(self, event):
+        """关闭窗口时释放预览端口"""
+        if self._preview_server.is_running:
+            self._preview_server.stop()
+        super().closeEvent(event)
 
     # ── 构建/发布 ──────────────────────────────────────────
     def do_build(self):
@@ -1335,7 +1479,14 @@ class MainWindow(QMainWindow):
     def _on_build_done(self, success):
         if success:
             self._load_data()
-            QMessageBox.information(self, '完成', '站点构建完成！\n输出目录: wwwroot/')
+            if self._preview_server.is_running:
+                self.statusBar().showMessage(
+                    f'构建完成，刷新浏览器即可查看: {self._preview_server.url}')
+                QMessageBox.information(
+                    self, '完成',
+                    '站点构建完成！\n预览服务正在运行，刷新浏览器即可查看最新内容。\n输出目录: wwwroot/')
+            else:
+                QMessageBox.information(self, '完成', '站点构建完成！\n输出目录: wwwroot/')
         else:
             QMessageBox.critical(self, '错误', '构建失败，请检查日志')
 
