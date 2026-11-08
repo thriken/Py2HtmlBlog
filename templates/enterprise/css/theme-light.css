@@ -1,0 +1,84 @@
+/* ============================================================
+   Enterprise Theme — Light Color Scheme（亮色配色方案）
+   通过 <html data-theme="light"> 覆盖 :root 变量
+   选用模板 enterprise_light 时默认启用；也可点击导航栏按钮实时切换
+   ============================================================ */
+
+:root[data-theme="light"] {
+  /* 品牌色在浅底上加深，保证 WCAG 对比度 */
+  --primary: #5546C9;
+  --primary-light: #4B3DBE;
+  --primary-dark: #3B2F9E;
+  --accent: #0086AD;
+  --accent2: #6A46D6;
+  --gradient-1: linear-gradient(135deg, #5546C9, #0086AD);
+  --gradient-2: linear-gradient(135deg, #6A46D6, #16875C);
+  --gradient-3: linear-gradient(135deg, #B32BC4, #5546C9);
+
+  /* 亮色底色 */
+  --bg-dark: #F5F7FC;
+  --bg-darker: #FFFFFF;
+  --bg-card: #FFFFFF;
+  --bg-card-hover: #FFFFFF;
+  --text-primary: #161C36;
+  --text-secondary: #4E5773;
+  --text-muted: #7C859C;
+  --border-color: rgba(22, 28, 54, 0.10);
+  --border-strong: rgba(85, 70, 201, 0.35);
+  --glow: rgba(85, 70, 201, 0.14);
+  --shadow-card: 0 18px 48px rgba(22, 28, 54, 0.10);
+  --header-scrolled: rgba(255, 255, 255, 0.88);
+  --code-bg: #F1F3FA;
+  --tag-bg: rgba(85, 70, 201, 0.09);
+}
+
+:root[data-theme="light"] body {
+  background-color: var(--bg-dark);
+  color: var(--text-primary);
+}
+
+/* 半透明色块：深色版用白色叠加，亮色版改用主色叠加 */
+:root[data-theme="light"] .hero::before {
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(85, 70, 201, 0.12) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 50%, rgba(0, 134, 173, 0.10) 0%, transparent 60%);
+}
+:root[data-theme="light"] .card {
+  box-shadow: 0 4px 18px rgba(22, 28, 54, 0.05);
+}
+:root[data-theme="light"] .card:hover {
+  box-shadow: var(--shadow-card);
+}
+:root[data-theme="light"] .cta-section {
+  background: linear-gradient(135deg, rgba(85, 70, 201, 0.10), rgba(0, 134, 173, 0.07));
+}
+:root[data-theme="light"] .cta-section::before {
+  background:
+    radial-gradient(ellipse at 30% 50%, rgba(85, 70, 201, 0.10) 0%, transparent 60%),
+    radial-gradient(ellipse at 70% 50%, rgba(0, 134, 173, 0.08) 0%, transparent 60%);
+}
+:root[data-theme="light"] .header.scrolled {
+  box-shadow: 0 4px 24px rgba(22, 28, 54, 0.07);
+}
+:root[data-theme="light"] .btn-primary {
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(85, 70, 201, 0.24);
+}
+:root[data-theme="light"] .btn-primary:hover {
+  box-shadow: 0 8px 26px rgba(85, 70, 201, 0.32);
+}
+:root[data-theme="light"] .section-alt {
+  box-shadow: inset 0 1px 0 var(--border-color);
+}
+:root[data-theme="light"] .tag-count {
+  background: var(--tag-bg); color: var(--primary);
+}
+:root[data-theme="light"] .tag-link {
+  background: var(--tag-bg); color: var(--primary);
+}
+:root[data-theme="light"] .tag-link:hover {
+  background: var(--primary); color: #fff;
+}
+:root[data-theme="light"] .back-to-top {
+  box-shadow: 0 6px 22px rgba(85, 70, 201, 0.28);
+}

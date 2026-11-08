@@ -1,0 +1,32 @@
+{% include "header.html" %}
+
+<section class="hero hero-inner">
+	<div class="container">
+		<span class="hero-label">Yearly Archive</span>
+		<h1>{{ year }} 年度归档</h1>
+		<p>共 {{ year_posts|length }} 篇文章</p>
+	</div>
+</section>
+
+<section>
+	<div class="container">
+		{% if year_posts %}
+		<div class="grid-3">
+			{% for post in year_posts %}
+			<article class="card post-card">
+				<div class="post-body">
+					<div class="post-meta"><time datetime="{{ post.date_str }}">{{ post.date_str }}</time></div>
+					<h3 class="post-title"><a href="{{ site_url }}/{{ post.entry_url }}">{{ post.title }}</a></h3>
+					<p class="post-excerpt">{{ post.excerpt }}</p>
+					<a href="{{ site_url }}/{{ post.entry_url }}" class="read-more">查看详情 &rarr;</a>
+				</div>
+			</article>
+			{% endfor %}
+		</div>
+		{% else %}
+		<p class="empty">{{ year }} 年暂时没有文章。</p>
+		{% endif %}
+	</div>
+</section>
+
+{% include "footer.html" %}

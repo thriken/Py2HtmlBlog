@@ -1,3 +1,4 @@
+[简体中空](readme.cn.md) | [English](readme.md)
 # py2htmlblog — 静态博客生成器
 
 > 模仿 ThingamaBlog 原理，使用 Python 编写的静态博客生成器。
@@ -454,6 +455,25 @@ GUI 功能：
 // 切换模板：修改 data/info.json
 { "template": "inove" }
 ```
+
+### 企业主题（克隆设计 + 亮色配色方案）
+
+`enterprise` 是克隆 [www.glasshengyao.com](https://www.glasshengyao.com) 视觉语言的企业主题：毛玻璃固定导航、渐变 Hero + 数据指标、卡片网格、CTA 区块、四栏页脚。全部颜色使用 CSS 变量，因此同时提供两套配色方案：
+
+| 模板名 | 默认配色 | 说明 |
+| ------ | -------- | ---- |
+| `enterprise` | 深色 | 忠实克隆：`#0A0E27` 底色，`#6C5CE7` / `#00D2FF` 渐变强调色 |
+| `enterprise_light` | 亮色 | 新增方案：白色 / `#F5F7FC` 底色，品牌色加深以保证浅底对比度 |
+
+```bash
+python main.py set template enterprise        # 深色
+python main.py set template enterprise_light  # 亮色
+python main.py build
+```
+
+导航栏的太阳/月亮按钮可在页面上实时切换配色（选择记入 `localStorage`）；模板名决定默认配色，手动选择优先。
+
+文件位于 `templates/enterprise/` 与 `templates/enterprise_light/`，均包含全套模板及 `css/style.css`、`css/theme-light.css`、`js/theme.js`。
 
 ---
 

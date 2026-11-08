@@ -1,0 +1,29 @@
+{% include "header.html" %}
+
+<section>
+	<div class="container article-wrap">
+		<div class="error-404">
+			<div class="error-code">404</div>
+			<div class="error-message">
+				<h2>页面未找到</h2>
+				<p>你访问的页面不存在或已被移动。</p>
+			</div>
+			<div class="error-actions">
+				<a href="{{ site_url }}/index.html" class="btn btn-primary">&larr; 返回首页</a>
+				<a href="{{ site_url }}/archives.html" class="btn btn-outline">浏览归档</a>
+			</div>
+			{% if recent_posts %}
+			<div class="error-suggestions">
+				<h3>最近文章</h3>
+				<ul>
+					{% for p in recent_posts %}
+					<li><a href="{{ site_url }}/{{ p.entry_url }}">{{ p.title }}</a></li>
+					{% endfor %}
+				</ul>
+			</div>
+			{% endif %}
+		</div>
+	</div>
+</section>
+
+{% include "footer.html" %}

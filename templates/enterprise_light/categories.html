@@ -1,0 +1,25 @@
+{% include "header.html" %}
+
+<section class="hero hero-inner">
+	<div class="container">
+		<span class="hero-label">Categories</span>
+		<h1>文章分类</h1>
+		<p>共 {{ categories|length }} 个分类</p>
+	</div>
+</section>
+
+<section>
+	<div class="container">
+		{% if categories %}
+		<div class="category-grid">
+			{% for c in categories %}
+			<a href="{{ site_url }}/archives/cat_{{ c.slug }}.html" class="category-card">{{ c.name }}</a>
+			{% endfor %}
+		</div>
+		{% else %}
+		<p class="empty">还没有分类。</p>
+		{% endif %}
+	</div>
+</section>
+
+{% include "footer.html" %}

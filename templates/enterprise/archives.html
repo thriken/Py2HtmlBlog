@@ -1,0 +1,33 @@
+{% include "header.html" %}
+
+<section class="hero hero-inner">
+	<div class="container">
+		<span class="hero-label">Archives</span>
+		<h1>文章归档</h1>
+		<p>共 {{ posts|length }} 篇文章 · {{ archives|length }} 个月份</p>
+	</div>
+</section>
+
+<section>
+	<div class="container">
+		{% if archives %}
+			{% for a in archives %}
+			<div class="archive-group">
+				<h2 class="archive-year-month">{{ a.label }} <span class="count">({{ a.count }})</span></h2>
+				<ul class="archive-posts">
+					{% for post in a.posts %}
+					<li>
+						<time datetime="{{ post.date_str }}">{{ post.date_str }}</time>
+						<a href="{{ site_url }}/{{ post.entry_url }}">{{ post.title }}</a>
+					</li>
+					{% endfor %}
+				</ul>
+			</div>
+			{% endfor %}
+		{% else %}
+		<p class="empty">还没有发布文章。</p>
+		{% endif %}
+	</div>
+</section>
+
+{% include "footer.html" %}

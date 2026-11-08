@@ -1,3 +1,4 @@
+[简体中空](readme.cn.md) | [English](readme.md)
 # py2htmlblog — Static Blog Generator
 
 > A static blog generator written in Python, inspired by the principles of ThingamaBlog.
@@ -456,6 +457,30 @@ The project includes **19 theme templates**. Set the `template` field in `data/i
 // Switch template: edit data/info.json
 { "template": "inove" }
 ```
+
+### Enterprise Theme (cloned design + light color scheme)
+
+`enterprise` is a corporate-style theme whose visual language is cloned from
+[www.glasshengyao.com](https://www.glasshengyao.com): sticky glass navigation,
+gradient hero with stats, card grids, CTA band and a four-column footer.
+All colors are CSS variables, so two color schemes ship with it:
+
+| Template name        | Default scheme | Description                          |
+| -------------------- | -------------- | ------------------------------------ |
+| `enterprise`         | Dark           | Faithful clone: `#0A0E27` base, `#6C5CE7` / `#00D2FF` gradient accents |
+| `enterprise_light`   | Light          | New scheme: white / `#F5F7FC` base with deepened brand colors for contrast |
+
+```bash
+python main.py set template enterprise        # dark
+python main.py set template enterprise_light  # light
+python main.py build
+```
+
+A sun/moon button in the header toggles the scheme at runtime (choice is kept in
+`localStorage`). The template name decides the default; a manual choice overrides it.
+
+Files: `templates/enterprise/` and `templates/enterprise_light/`, each containing
+the full template set plus `css/style.css`, `css/theme-light.css`, `js/theme.js`.
 
 ---
 

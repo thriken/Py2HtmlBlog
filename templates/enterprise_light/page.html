@@ -1,0 +1,18 @@
+{% include "header.html" %}
+
+<section class="hero hero-inner">
+	<div class="container">
+		<span class="hero-label">Page</span>
+		<h1>{{ page_obj.title|default:page_title }}</h1>
+	</div>
+</section>
+
+<section>
+	<div class="container article-wrap">
+		<article class="post-full">
+			<div class="post-content">{{ page_obj.content_html|raw }}</div>
+		</article>
+	</div>
+</section>
+
+{% include "footer.html" %}
