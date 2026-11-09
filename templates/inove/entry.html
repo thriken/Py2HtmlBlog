@@ -1,0 +1,60 @@
+{% include 'header.html' %}
+	<!-- main START -->
+	<div id="main">
+
+		<p align="center">
+		{% if prev_post %}
+		<a href="/{{ prev_post.entry_url }}"><i class="fa fa-arrow-left"></i> {{ prev_post.title }}</a> |
+		{% else %}
+		<span><i class="fa fa-arrow-left"></i> (no earlier posts)</span> |
+		{% endif %}
+		<a href="/index.html">Main</a>
+		{% if next_post %}
+		| <a href="/{{ next_post.entry_url }}">{{ next_post.title }} <i class="fa fa-arrow-right"></i></a>
+		{% else %}
+		| <span>(no newer posts) <i class="fa fa-arrow-right"></i></span>
+		{% endif %}
+		</p>
+
+		<div class="post" id="post-19">
+			<h2><a class="title" href="/{{ entry_url }}" rel="bookmark">{{ post.title }}</a></h2>
+			<div class="info">
+				<span class="date"><i class="fa fa-calendar"></i> {{ post.date_str }}</span>
+				{% if post.author %}<span class="author"><i class="fa fa-user"></i> {{ post.author }}</span>{% endif %}
+				<div class="fixed"></div>
+			</div>
+			<div class="content">
+				{{ post.content_html|safe }}
+				<p class="under">
+				<span><i class="fa fa-folder-open"></i> <a href="/archives/cat_{{ post.category_slug }}.html">{{ post.category_name }}</a></span>
+				{% if post.tags %}
+				<span><i class="fa fa-tags"></i> {% for tl in post.tag_links %}<a href="/{{ tl.url }}">{{ tl.name }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</span>
+				{% endif %}
+				</p>
+				<div class="fixed"></div>
+				{{ comment_code|safe }}
+			</div>
+		</div>
+
+		{% if near_posts %}
+		<div class="post">
+			<h2>Related Posts</h2>
+			<div class="content">
+				<ul>
+				{% for np in near_posts %}
+				<li><a href="/{{ np.entry_url }}">{{ np.title }}</a></li>
+				{% endfor %}
+				</ul>
+			</div>
+		</div>
+		{% endif %}
+
+		<div id="pagenavi">
+			{% if prev_post %}<span class="newer"><a href="/{{ prev_post.entry_url }}"><i class="fa fa-arrow-left"></i> {{ prev_post.title }}</a></span>{% else %}<span class="newer"></span>{% endif %}
+			{% if next_post %}<span class="older"><a href="/{{ next_post.entry_url }}">{{ next_post.title }} <i class="fa fa-arrow-right"></i></a></span>{% else %}<span class="older"></span>{% endif %}
+			<div class="fixed"></div>
+		</div>
+
+	</div>
+	<!-- main END -->
+{% include 'footer.html' %}

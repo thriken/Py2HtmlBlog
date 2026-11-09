@@ -1,7 +1,6 @@
 /* ============================================================
-   Enterprise Theme — 交互脚本
-   1) 亮/暗配色切换（记忆到 localStorage）
-   2) 导航栏滚动态、移动端菜单、返回顶部
+   Enterprise Theme — 亮/暗配色切换
+   导航滚动、移动菜单、滚动动画、返回顶部由 js/main.js 负责
    ============================================================ */
 (function () {
   'use strict';
@@ -10,13 +9,13 @@
   var root = document.documentElement;
   var defaultTheme = root.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
 
-  /* ---------- 配色切换 ---------- */
   function applyTheme(theme) {
     root.setAttribute('data-theme', theme);
     var btn = document.getElementById('themeToggle');
     if (btn) {
-      btn.setAttribute('aria-label', theme === 'light' ? '切换到深色配色' : '切换到亮色配色');
-      btn.title = theme === 'light' ? '切换到深色配色' : '切换到亮色配色';
+      var label = theme === 'light' ? '切换到深色配色' : '切换到亮色配色';
+      btn.setAttribute('aria-label', label);
+      btn.title = label;
     }
   }
 
@@ -32,43 +31,6 @@
       var next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
       applyTheme(next);
       try { localStorage.setItem(STORAGE_KEY, next); } catch (e) { /* ignore */ }
-    });
-  }
-
-  /* ---------- 导航栏滚动态 ---------- */
-  var header = document.getElementById('siteHeader');
-  if (header) {
-    var onScroll = function () {
-      header.classList.toggle('scrolled', window.scrollY > 20);
-      var top = document.getElementById('backToTop');
-      if (top) top.style.display = window.scrollY > 400 ? 'flex' : 'none';
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
-  }
-
-  /* ---------- 移动端菜单 ---------- */
-  var menuBtn = document.getElementById('menuToggle');
-  var menu = document.getElementById('navMenu');
-  if (menuBtn && menu) {
-    menuBtn.addEventListener('click', function () {
-      menu.classList.toggle('open');
-      menuBtn.classList.toggle('active');
-    });
-    menu.addEventListener('click', function (e) {
-      if (e.target.tagName === 'A') {
-        menu.classList.remove('open');
-        menuBtn.classList.remove('active');
-      }
-    });
-  }
-
-  /* ---------- 返回顶部 ---------- */
-  var backBtn = document.getElementById('backToTop');
-  if (backBtn) {
-    backBtn.addEventListener('click', function (e) {
-      e.preventDefault();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   }
 })();

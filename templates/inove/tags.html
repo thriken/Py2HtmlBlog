@@ -1,0 +1,19 @@
+{% include 'header.html' %}
+	<!-- main START -->
+	<div id="main">
+
+		<div class="post">
+			<h2><i class="fa fa-tags"></i> 标签</h2>
+			<div class="content">
+				<ul>
+				{% for t in all_tags %}
+				<li><a href="/archives/tag_{{ t.slug }}.html">{{ t.name }}</a> ({{ t.count }} 篇)</li>
+				{% endfor %}
+				</ul>
+				<div class="fixed"></div>
+			</div>
+		</div>
+
+	</div>
+	<!-- main END -->
+{% include 'footer.html' %}

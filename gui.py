@@ -769,7 +769,7 @@ class MainWindow(QMainWindow):
             ('language', '语言'),
             ('timezone', '时区'),
             ('template', '模板名'),
-            ('posts_per_page', '每页文章数'),
+            ('posts_per_page', '每页文章数（建议 6/8/9/12）'),
             ('rss_count', 'RSS 条目数'),
             ('copyright', '版权信息'),
         ]
@@ -802,7 +802,7 @@ class MainWindow(QMainWindow):
 
         form.addWidget(QLabel('页脚代码'), len(fields) + 1, 0)
         self.set_footer = QTextEdit()
-        self.set_footer.setMaximumHeight(60)
+        self.set_footer.setMaximumHeight(90)
         form.addWidget(self.set_footer, len(fields) + 1, 1)
         self.set_fields['footer_code'] = self.set_footer
 

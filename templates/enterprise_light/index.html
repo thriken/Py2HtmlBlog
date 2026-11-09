@@ -1,35 +1,57 @@
 {% include "header.html" %}
 
+<!-- ========== Hero ========== -->
 <section class="hero">
-	<div class="container">
-		<span class="hero-label">Welcome</span>
-		<h1>{{ site_name }}<br /><span class="gradient-text">{{ tagline|default:"记录 · 分享 · 成长" }}</span></h1>
+	<div class="hero-content">
+		<h1>{{ site_name }}<br />
+			<span class="gradient-text">{{ tagline|default:"记录 · 分享 · 成长" }}</span></h1>
 		<p>{{ site.description }}</p>
 		<div class="hero-buttons">
-			<a href="/archives.html" class="btn btn-primary">浏览全部文章</a>
-			<a href="/rss.xml" class="btn btn-outline">订阅更新</a>
+			<a href="/archives.html" class="btn btn-primary"><i class="fa-solid fa-arrow-right"></i> 浏览全部文章</a>
+			<a href="/rss.xml" class="btn btn-outline"><i class="fa-solid fa-rss"></i> 订阅更新</a>
 		</div>
-		<div class="hero-stats">
-			<div class="stat-item">
+	</div>
+	<div class="hero-stats">
+		<div class="stat-item">
+			<div class="stat-number">{{ post_count }}</div>
+			<div class="stat-label">篇文章</div>
+		</div>
+		<div class="stat-item">
+			<div class="stat-number">{{ categories|length }}</div>
+			<div class="stat-label">个分类</div>
+		</div>
+		<div class="stat-item">
+			<div class="stat-number">{{ links|length }}</div>
+			<div class="stat-label">条友链</div>
+		</div>
+	</div>
+</section>
+
+<!-- ========== 数据统计 ========== -->
+<section class="stats-section">
+	<div class="container">
+		<div class="stats-grid">
+			<div class="stat-box animate-on-scroll">
 				<div class="stat-number">{{ post_count }}</div>
-				<div class="stat-label">篇文章</div>
+				<div class="stat-label">已发布文章</div>
 			</div>
-			<div class="stat-item">
-				<div class="stat-number">{{ categories|length }}</div>
-				<div class="stat-label">个分类</div>
-			</div>
-			<div class="stat-item">
-				<div class="stat-number">{{ all_tags|length }}</div>
-				<div class="stat-label">个标签</div>
-			</div>
-			<div class="stat-item">
+			<div class="stat-box animate-on-scroll">
 				<div class="stat-number">{{ archives|length }}</div>
-				<div class="stat-label">个月度归档</div>
+				<div class="stat-label">月度归档</div>
+			</div>
+			<div class="stat-box animate-on-scroll">
+				<div class="stat-number">{{ all_tags|length }}</div>
+				<div class="stat-label">内容标签</div>
+			</div>
+			<div class="stat-box animate-on-scroll">
+				<div class="stat-number">{{ categories|length }}</div>
+				<div class="stat-label">文章分类</div>
 			</div>
 		</div>
 	</div>
 </section>
 
+<!-- ========== 最新动态 ========== -->
 <section>
 	<div class="container">
 		<div class="section-header">
@@ -39,20 +61,20 @@
 		</div>
 
 		{% if page_posts %}
-		<div class="grid-3">
+		<div class="grid-3 post-grid" style="--cols-wide: {{ grid.cols_wide }}; --cols-mid: {{ grid.cols_mid }}; --cols-narrow: {{ grid.cols_narrow }}">
 			{% for post in page_posts %}
-			<article class="card post-card">
-				<div class="post-body">
-					<div class="post-meta">
-						<time datetime="{{ post.date_str }}">{{ post.date_str }}</time>
+			<article class="card news-card post-card animate-on-scroll">
+				<div class="news-image post-thumb"><i class="fa-solid fa-newspaper"></i></div>
+				<div class="news-content post-body">
+					<div class="news-meta post-meta">
+						<span>{{ post.date_str }}</span>
 						{% if post.category_name %}
-						<span>&middot;</span>
 						<a href="/archives/cat_{{ post.category_slug }}.html">{{ post.category_name }}</a>
 						{% endif %}
 					</div>
-					<h3 class="post-title"><a href="/{{ post.entry_url }}">{{ post.title }}</a></h3>
-					<p class="post-excerpt">{{ post.excerpt }}</p>
-					<a href="/{{ post.entry_url }}" class="read-more">查看详情 &rarr;</a>
+					<h3><a href="/{{ post.entry_url }}">{{ post.title }}</a></h3>
+					<p>{{ post.excerpt }}</p>
+					<a href="/{{ post.entry_url }}" class="read-more">查看详情 <i class="fa-solid fa-arrow-right"></i></a>
 				</div>
 			</article>
 			{% endfor %}
@@ -68,6 +90,42 @@
 			{% if has_next %}<a href="/{{ next_page }}" class="page-btn">下一页 &raquo;</a>{% endif %}
 		</nav>
 		{% endif %}
+	</div>
+</section>
+
+<!-- ========== 关于本站 ========== -->
+<section class="section-alt">
+	<div class="container">
+		<div class="section-header">
+			<span class="label">About Us</span>
+			<h2>关于本站</h2>
+			<p>{{ tagline }}</p>
+		</div>
+		<div class="grid-2">
+			<div class="animate-on-scroll">
+				<h3 class="mb-20">{{ site_name }}</h3>
+				<p>{{ site.description }}</p>
+				<p>本站由 py2htmlblog 静态博客生成器构建，内容以 Markdown 写作，归档、分类、标签与 RSS 订阅均自动生成。</p>
+				<a href="/archives.html" class="btn btn-primary btn-sm">了解更多</a>
+			</div>
+			<div class="animate-on-scroll about-image">
+				<img src="/images/about.jpg" alt="{{ site_name }}" loading="lazy" />
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- ========== CTA ========== -->
+<section class="cta-section">
+	<div class="container">
+		<div class="cta-content">
+			<h2>保持关注，持续更新</h2>
+			<p>订阅 RSS，第一时间获取最新内容</p>
+			<div class="cta-buttons">
+				<a href="/archives.html" class="btn btn-primary"><i class="fa-solid fa-box-archive"></i> 浏览归档</a>
+				<a href="/rss.xml" class="btn btn-outline"><i class="fa-solid fa-rss"></i> 订阅 RSS</a>
+			</div>
+		</div>
 	</div>
 </section>
 

@@ -8,6 +8,8 @@
 	<meta name="author" content="{{ author }}" />
 	<link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="/rss.xml" />
 	<link rel="stylesheet" href="/css/style.css" />
+	<link rel="stylesheet" href="/css/all.min.css" />
+	<link rel="stylesheet" href="/css/blog.css" />
 	<link rel="stylesheet" href="/css/theme-light.css" />
 	<script>
 	/* 首屏前应用配色，避免闪烁；完整逻辑见 js/theme.js */
@@ -21,17 +23,18 @@
 	})();
 	</script>
 	<script defer src="/js/theme.js"></script>
+	<script defer src="/js/main.js"></script>
 </head>
 <body>
 
-<header class="header" id="siteHeader">
+<header class="header">
 	<div class="container">
 		<a href="/index.html" class="logo">
 			<span class="logo-mark">&#9672;</span>
 			<span class="gradient-text">{{ site_name }}</span>
 		</a>
 
-		<nav class="nav-menu" id="navMenu">
+		<nav class="nav-menu">
 			<a href="/index.html" class="{% if page_title == '首页' %}active{% endif %}">首页</a>
 			{% if categories %}<a href="/categories.html">分类</a>{% endif %}
 			{% if all_tags %}<a href="/tags.html">标签</a>{% endif %}
@@ -44,10 +47,10 @@
 
 		<div class="nav-actions">
 			<button type="button" class="theme-toggle" id="themeToggle" title="切换配色" aria-label="切换配色">
-				<span class="theme-icon-moon">&#9789;</span><span class="theme-icon-sun">&#9728;</span>
+				<i class="fa-solid fa-moon theme-icon-moon"></i><i class="fa-solid fa-sun theme-icon-sun"></i>
 			</button>
-			<a href="/archives.html" class="btn btn-primary btn-sm">浏览文章</a>
-			<button type="button" class="menu-toggle" id="menuToggle" aria-label="菜单">
+			<a href="/archives.html" class="btn btn-primary btn-sm"><i class="fa-solid fa-newspaper"></i> 浏览文章</a>
+			<button type="button" class="menu-toggle" aria-label="菜单">
 				<span></span><span></span><span></span>
 			</button>
 		</div>

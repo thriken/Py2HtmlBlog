@@ -1,0 +1,16 @@
+{% include 'header.html' %}
+	<!-- main START -->
+	<div id="main">
+
+		<div class="post" id="post-page">
+			<h2>{% if page_obj.title %}{{ page_obj.title }}{% else %}{{ page_title }}{% endif %}</h2>
+			<div class="content page-body">
+				{{ page_obj.content_html|raw }}
+				<p class="under"></p>
+				<div class="fixed"></div>
+			</div>
+		</div>
+
+	</div>
+	<!-- main END -->
+{% include 'footer.html' %}

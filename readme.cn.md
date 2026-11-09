@@ -119,7 +119,7 @@ JSON 文件，包含站点配置：
 | `timezone`      | string | 否   | **【补充】** 时区（默认 `Asia/Shanghai`）                  |
 | `template`      | string | 是   | 采用的模板名（对应 `templates/` 下的文件夹名）             |
 | `next_post_id`  | int    | 是   | 下一篇文章 ID（自动递增）                                   |
-| `posts_per_page`| int    | 否   | **【补充】** 首页每页文章数（默认 10）                     |
+| `posts_per_page`| int    | 否   | **【补充】** 首页每页文章数（默认 9）                     |
 | `rss_count`     | int    | 否   | **【补充】** RSS 订阅条目数（默认 20）                     |
 | `copyright`     | string | 否   | **【补充】** 版权信息                                       |
 | `comment_code`  | string | 否   | **【补充】** 评论系统嵌入代码（如友言、Disqus）            |
@@ -140,7 +140,7 @@ JSON 文件，包含站点配置：
   "timezone": "Asia/Shanghai",
   "template": "default",
   "next_post_id": 6,
-  "posts_per_page": 10,
+  "posts_per_page": 9,
   "rss_count": 20,
   "copyright": "Copyright 2026 ThingamaBlog",
   "comment_code": "",
@@ -310,6 +310,30 @@ slug:                              # 可选，留空自动从标题生成
 
 ---
 
+## 安装与依赖
+
+**Python 3.8+**。生成器核心（`main.py`、模板引擎、Markdown 转换、`mhttpd.py` 本地预览服务器、FTP/Git 发布）**仅使用 Python 标准库**，只用命令行构建站点无需安装任何第三方包。
+
+项目实际导入的第三方包全部记录在 `requirements.txt` 中：
+
+| 包 | 版本约束 | 用途 | 是否必需 |
+| --- | --- | --- | --- |
+| `PyQt5` | `>=5.15,<6` | 桌面 GUI（`python main.py gui`） | 仅 GUI 需要 |
+| `paramiko` | `>=3.0` | SFTP 发布（`python main.py deploy`） | 可选 |
+
+```bash
+# 一次安装全部
+pip install -r requirements.txt
+
+# 或只装需要的
+pip install PyQt5       # GUI
+pip install paramiko    # SFTP 发布
+```
+
+`requirements.txt` 刻意保持精简 —— 项目没有导入其它第三方包。仅使用 CLI 时可以完全跳过 `pip install`。
+
+---
+
 ## 使用方法
 
 ### 命令行
@@ -364,7 +388,7 @@ GUI 功能：
 - **站点设置** — 可视化编辑站点配置
 - **一键构建/发布** — 后台线程构建，不阻塞界面
 
-> GUI 依赖：`pip install PyQt5`
+> GUI 依赖 PyQt5 —— 见[安装与依赖](#安装与依赖)。
 
 ---
 
@@ -383,7 +407,7 @@ GUI 功能：
 - `author` / `author_email` — 作者信息
 - `language` — 站点语言（默认 `zh-CN`）
 - `timezone` — 时区（默认 `Asia/Shanghai`）
-- `posts_per_page` — 首页每页文章数（默认 10）
+- `posts_per_page` — 首页每页文章数（默认 9）
 - `rss_count` — RSS 订阅条目数（默认 20）
 - `copyright` — 页脚版权信息
 - `comment_code` — 评论系统嵌入代码
@@ -458,7 +482,7 @@ GUI 功能：
 
 ### 企业主题（克隆设计 + 亮色配色方案）
 
-`enterprise` 是克隆 [www.glasshengyao.com](https://www.glasshengyao.com) 视觉语言的企业主题：毛玻璃固定导航、渐变 Hero + 数据指标、卡片网格、CTA 区块、四栏页脚。全部颜色使用 CSS 变量，因此同时提供两套配色方案：
+`enterprise` 是克隆某企业站视觉语言的企业主题：毛玻璃固定导航、渐变 Hero + 数据指标、卡片网格、CTA 区块、四栏页脚。全部颜色使用 CSS 变量，因此同时提供两套配色方案：
 
 | 模板名 | 默认配色 | 说明 |
 | ------ | -------- | ---- |

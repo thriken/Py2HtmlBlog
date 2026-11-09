@@ -164,11 +164,50 @@ class SiteBuilder:
                    else f'rm -rf "{path}"/*')
         os.makedirs(path, exist_ok=True)
 
+    # ── 整行网格：按文章数的约数决定各断点列数 ───────────────
+    @staticmethod
+    def _grid_layout(count, max_cols=4):
+        """计算列表页在三个断点下使用的列数。
+
+        列数只从本页文章数的约数中挑选，任何宽度下每行都能排满，
+        不会出现「3-3-3-1」这种最后一行落单的布局。
+        例: 9 篇 → 3/3/1 列；8 篇 → 4/2/1 列；10 篇 → 2/2/1 列；
+            12 篇 → 4/3/1 列；6 篇 → 3/2/1 列；5 篇 → 1/1/1 列。
+        断点与 style.css 一致: >1024px / 768~1024px / <768px。
+        """
+        count = max(1, int(count or 0))
+        divisors = [d for d in range(1, max_cols + 1) if count % d == 0]
+        wide = divisors[-1]
+        smaller = [d for d in divisors if d < wide]
+        mid = smaller[-1] if smaller else wide
+        # 宽屏本来就只有 2~3 列时，平板继续保持同列数，避免直接掉到 1 列
+        if wide <= 3 and mid == 1:
+            mid = wide
+        return {
+            'cols_wide': wide,
+            'cols_mid': mid,
+            'cols_narrow': 1,
+        }
+
+    # ── 导航高亮：URL 规范化 ───────────────────────────────
+    @staticmethod
+    def _nav_url(url):
+        """把导航 URL / 当前页 URL 规范成可比较的根相对形式"""
+        url = (url or '').strip()
+        if not url:
+            return '#'
+        if url.startswith(('http://', 'https://', '//', '#')):
+            return url
+        url = url.split('#', 1)[0].split('?', 1)[0]
+        return url if url.startswith('/') else '/' + url
+
     # ── 构建公共上下文 ─────────────────────────────────────
     def _base_context(self, info, categories, links, posts, pages=None):
         archives = self._group_by_month(posts)
         tag_map = self._build_tag_map(posts)
         page_list = [p.to_dict() for p in (pages or [])]
+        post_dicts = [self._post_dict(p, info, categories) for p in posts]
+        link_dicts = [l.to_dict() for l in links]
         return {
             'site': info,
             'site_name': info.site_name,
@@ -180,13 +219,21 @@ class SiteBuilder:
             'copyright': info.copyright,
             'comment_code': info.comment_code,
             'footer_code': info.footer_code,
-            'nav_pages': info.nav_pages,
+            'nav_pages': [
+                dict(p, nav_url=self._nav_url(p.get('url')))
+                for p in (info.nav_pages or []) if isinstance(p, dict)
+            ],
+            'current_url': '',
             'categories': [c.to_dict() for c in categories],
             'category_objs': categories,
-            'links': [l.to_dict() for l in links],
+            'links': link_dicts,
+            'links_even': link_dicts[0::2],
+            'links_odd': link_dicts[1::2],
             'link_objs': links,
-            'posts': [self._post_dict(p, info, categories) for p in posts],
+            'posts': post_dicts,
+            'recent_posts': post_dicts[:10],
             'post_count': len(posts),
+            'grid': self._grid_layout(len(posts)),
             'archives': archives,
             'tags': tag_map,
             'all_tags': [{'name': name, 'slug': slug, 'count': count} for name, slug, count in tag_map],
@@ -229,10 +276,11 @@ class SiteBuilder:
         # 标签链接
         tag_links = []
         for tag in post.tag_list():
+            slug = self._tag_slug(tag)
             tag_links.append({
                 'name': tag,
-                'slug': slugify(tag) or tag.lower(),
-                'url': f'archives/tag_{slugify(tag) or tag.lower()}.html',
+                'slug': slug,
+                'url': f'archives/tag_{slug}.html',
             })
         return {
             'id': post.id,
@@ -266,7 +314,9 @@ class SiteBuilder:
             page_posts = posts[start:start + per_page]
             page_ctx = dict(ctx)
             page_ctx['page_posts'] = [self._post_dict(p, info, categories) for p in page_posts]
+            page_ctx['grid'] = self._grid_layout(len(page_posts))
             page_ctx['page_title'] = '首页' if page == 1 else f'第 {page} 页'
+            page_ctx['current_url'] = '/index.html'
             page_ctx['current_page'] = page
             page_ctx['total_pages'] = total_pages
             page_ctx['has_prev'] = page > 1
@@ -292,6 +342,7 @@ class SiteBuilder:
         page_ctx['archives'] = archives
         page_ctx['all_posts'] = [self._post_dict(p, info, categories) for p in posts]
         page_ctx['page_title'] = '归档'
+        page_ctx['current_url'] = '/archives.html'
         html = engine.render('archives.html', page_ctx)
         path = os.path.join(self.wwwroot, 'archives.html')
         with open(path, 'w', encoding='utf-8') as f:
@@ -320,6 +371,7 @@ class SiteBuilder:
             page_ctx['cat'] = cat
             page_ctx['cat_posts'] = [self._post_dict(p, info, categories) for p in cat_posts]
             page_ctx['page_posts'] = page_ctx['cat_posts']  # ThingamaBlog 兼容
+            page_ctx['grid'] = self._grid_layout(len(cat_posts))
             page_ctx['page_title'] = cat.name
             html = engine.render('category.html', page_ctx)
             path = os.path.join(arch_dir, f'cat_{cat.slug}.html')
@@ -381,6 +433,7 @@ class SiteBuilder:
             page_ctx = dict(ctx)
             page_ctx['archive'] = group
             page_ctx['month_posts'] = [self._post_dict(p, info, categories) for p in group['posts']]
+            page_ctx['grid'] = self._grid_layout(len(group['posts']))
             page_ctx['page_title'] = group['label']
             html = engine.render('month_archive.html', page_ctx)
             # 文件名：MM-DD-YYYY_MM-DD-YYYY.html
@@ -537,6 +590,11 @@ class SiteBuilder:
         return result
 
     # ── 标签管理 ─────────────────────────────────────────────
+    @staticmethod
+    def _tag_slug(tag):
+        """标签 URL 统一使用同一个 slug，保证链接与生成文件名一致"""
+        return slugify(tag) or tag
+
     def _build_tag_map(self, posts):
         """构建标签映射：{name: {slug, count}}"""
         tag_counts = defaultdict(int)
@@ -545,7 +603,7 @@ class SiteBuilder:
             for tag in p.tag_list():
                 tag_counts[tag] += 1
                 if tag not in tag_slugs:
-                    tag_slugs[tag] = slugify(tag) or tag
+                    tag_slugs[tag] = self._tag_slug(tag)
         # 返回排序后的列表
         sorted_tags = sorted(tag_counts.items(), key=lambda x: x[1], reverse=True)
         return [(name, tag_slugs[name], count) for name, count in sorted_tags]
@@ -579,6 +637,7 @@ class SiteBuilder:
                 page_ctx['tag_slug'] = tag_slug
                 page_ctx['tag_posts'] = [self._post_dict(p, info, categories) for p in tag_posts]
                 page_ctx['page_posts'] = page_ctx['tag_posts']  # ThingamaBlog 兼容
+                page_ctx['grid'] = self._grid_layout(len(tag_posts))
                 page_ctx['page_title'] = f'标签: {tag_name}'
                 html = engine.render('tag.html', page_ctx)
                 path = os.path.join(arch_dir, f'tag_{tag_slug}.html')
@@ -601,6 +660,7 @@ class SiteBuilder:
                 page_ctx = dict(ctx)
                 page_ctx['year'] = year
                 page_ctx['year_posts'] = [self._post_dict(p, info, categories) for p in year_posts]
+                page_ctx['grid'] = self._grid_layout(len(year_posts))
                 page_ctx['page_title'] = f'{year} 年归档'
                 html = engine.render('year_archive.html', page_ctx)
                 path = os.path.join(arch_dir, f'{year}.html')
@@ -618,6 +678,7 @@ class SiteBuilder:
             try:
                 page_ctx = dict(ctx)
                 page_ctx['page_title'] = page.title
+                page_ctx['current_url'] = self._nav_url(f'{page.slug}.html')
                 page_ctx['page_obj'] = page.to_dict()
                 page_ctx['p'] = page.to_dict()  # 兼容简写
                 html = engine.render('page.html', page_ctx)

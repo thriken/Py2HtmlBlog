@@ -228,7 +228,7 @@ class SiteInfo:
     timezone: str = 'Asia/Shanghai'
     template: str = 'default'
     next_post_id: int = 1
-    posts_per_page: int = 10
+    posts_per_page: int = 9
     rss_count: int = 20
     copyright: str = ''
     comment_code: str = ''           # 评论系统嵌入代码
@@ -272,7 +272,7 @@ class SiteInfo:
             timezone=d.get('timezone', 'Asia/Shanghai'),
             template=d.get('template', 'default'),
             next_post_id=int(d.get('next_post_id', 1)),
-            posts_per_page=int(d.get('posts_per_page', 10)),
+            posts_per_page=int(d.get('posts_per_page', 9)),
             rss_count=int(d.get('rss_count', 20)),
             copyright=d.get('copyright', ''),
             comment_code=d.get('comment_code', ''),

@@ -240,7 +240,7 @@ class Manager:
             timezone='Asia/Shanghai',
             template='default',
             next_post_id=1,
-            posts_per_page=10,
+            posts_per_page=9,
             rss_count=20,
             copyright=f'Copyright {datetime.now().year} {site_name}',
             nav_pages=[

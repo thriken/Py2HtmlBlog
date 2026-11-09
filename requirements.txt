@@ -1,0 +1,10 @@
+# py2htmlblog — minimal runtime dependencies
+# Python 3.8+ required.
+#
+# Core CLI (site build, template engine, Markdown conversion, local HTTP
+# preview via mhttpd.py, FTP/Git deployment) uses only the standard library.
+#
+#   pip install -r requirements.txt
+
+PyQt5>=5.15,<6        # GUI: python main.py gui
+paramiko>=3.0         # optional: SFTP deployment (python main.py deploy)

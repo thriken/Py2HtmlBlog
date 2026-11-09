@@ -119,7 +119,7 @@ A JSON file containing site configuration:
 | `timezone`       | string | No       | **Supplementary**: timezone (default `Asia/Shanghai`)              |
 | `template`       | string | Yes      | Template name (matches a folder under `templates/`)                |
 | `next_post_id`   | int    | Yes      | Next article ID (auto-incrementing)                                |
-| `posts_per_page` | int    | No       | **Supplementary**: articles per page on homepage (default 10)      |
+| `posts_per_page` | int    | No       | **Supplementary**: articles per page on homepage (default 9)      |
 | `rss_count`      | int    | No       | **Supplementary**: number of RSS feed entries (default 20)         |
 | `copyright`      | string | No       | **Supplementary**: copyright notice                                |
 | `comment_code`   | string | No       | **Supplementary**: comment system embed code (e.g. Disqus)         |
@@ -140,7 +140,7 @@ Example:
   "timezone": "Asia/Shanghai",
   "template": "default",
   "next_post_id": 6,
-  "posts_per_page": 10,
+  "posts_per_page": 9,
   "rss_count": 20,
   "copyright": "Copyright 2026 ThingamaBlog",
   "comment_code": "",
@@ -310,6 +310,35 @@ After running `python main.py build`, the system will:
 
 ---
 
+## Installation & Dependencies
+
+**Python 3.8+**. The generator core (`main.py`, template engine, Markdown
+conversion, local preview server `mhttpd.py`, FTP/Git deployment) uses **only
+the Python standard library** — no third-party package is needed to build a
+site from the command line.
+
+All third-party packages imported by the project are listed in
+`requirements.txt`:
+
+| Package | Constraint | Used by | Required? |
+| ------- | ---------- | ------- | --------- |
+| `PyQt5` | `>=5.15,<6` | Desktop GUI (`python main.py gui`) | GUI only |
+| `paramiko` | `>=3.0` | SFTP deployment (`python main.py deploy`) | Optional |
+
+```bash
+# Install everything at once
+pip install -r requirements.txt
+
+# Or install only what you need
+pip install PyQt5       # GUI
+pip install paramiko    # SFTP deployment
+```
+
+`requirements.txt` is intentionally minimal — nothing else is imported by the
+project. CLI-only users can skip `pip install` entirely.
+
+---
+
 ## Usage
 
 ### Command Line
@@ -364,7 +393,7 @@ GUI features:
 - **Site Settings** — Visual configuration editor
 - **One-click Build / Deploy** — Background thread build, non-blocking UI
 
-> GUI requires: `pip install PyQt5`
+> GUI requires PyQt5 — see [Installation & Dependencies](#installation--dependencies).
 
 ---
 
@@ -383,7 +412,7 @@ Parameters not explicitly defined in the original documentation have been supple
 - `author` / `author_email` — Author information.
 - `language` — Site language (default `zh-CN`).
 - `timezone` — Timezone (default `Asia/Shanghai`).
-- `posts_per_page` — Articles per homepage page (default 10).
+- `posts_per_page` — Articles per homepage page (default 9).
 - `rss_count` — Number of RSS feed entries (default 20).
 - `copyright` — Footer copyright text.
 - `comment_code` — Comment system embed code.

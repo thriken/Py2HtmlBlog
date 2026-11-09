@@ -1,16 +1,5 @@
 </main>
 
-<section class="cta-section">
-	<div class="container cta-content">
-		<h2>保持关注，持续更新</h2>
-		<p>订阅 RSS，第一时间获取最新内容</p>
-		<div class="cta-buttons">
-			<a href="/archives.html" class="btn btn-primary">浏览归档</a>
-			<a href="/rss.xml" class="btn btn-outline">订阅 RSS</a>
-		</div>
-	</div>
-</section>
-
 <footer class="footer">
 	<div class="container">
 		<div class="footer-grid">
@@ -20,6 +9,11 @@
 					<span class="gradient-text">{{ site_name }}</span>
 				</a>
 				<p>{{ site.description }}</p>
+				<div class="footer-social">
+					<a href="/rss.xml" aria-label="RSS 订阅"><i class="fa-solid fa-rss"></i></a>
+					<a href="/archives.html" aria-label="文章归档"><i class="fa-solid fa-box-archive"></i></a>
+					{% if author_email %}<a href="mailto:{{ author_email }}" aria-label="联系作者"><i class="fa-solid fa-envelope"></i></a>{% endif %}
+				</div>
 			</div>
 
 			{% if categories %}
@@ -34,18 +28,6 @@
 			{% endif %}
 
 			<div class="footer-col">
-				<h4>站点导航</h4>
-				<div class="footer-links">
-					<a href="/index.html">首页</a>
-					<a href="/archives.html">文章归档</a>
-					{% if all_tags %}<a href="/tags.html">标签云</a>{% endif %}
-					{% for page in nav_pages %}
-					<a href="{{ page.url }}">{{ page.title }}</a>
-					{% endfor %}
-				</div>
-			</div>
-
-			<div class="footer-col">
 				<h4>友情链接</h4>
 				<div class="footer-links">
 					{% if links %}
@@ -57,16 +39,31 @@
 					{% endif %}
 				</div>
 			</div>
+
+			<div class="footer-col">
+				<h4>站点导航</h4>
+				<ul class="footer-contact">
+					<li><i class="fa-solid fa-house"></i> <a href="/index.html">首页</a></li>
+					<li><i class="fa-solid fa-folder-open"></i> <a href="/categories.html">分类</a></li>
+					<li><i class="fa-solid fa-tags"></i> <a href="/tags.html">标签</a></li>
+					<li><i class="fa-solid fa-clock-rotate-left"></i> <a href="/archives.html">归档</a></li>
+					{% for page in nav_pages %}
+					<li><i class="fa-solid fa-file-lines"></i> <a href="{{ page.url }}">{{ page.title }}</a></li>
+					{% endfor %}
+				</ul>
+			</div>
 		</div>
 
 		<div class="footer-bottom">
 			<p>{{ copyright }} &middot; &copy; {{ build_year }} {{ site_name }}</p>
-			<p>Powered by <a href="https://github.com">py2htmlblog</a> &middot; <a href="/rss.xml">RSS</a></p>
+			<div class="footer-bottom-links">
+				<a href="/rss.xml">RSS</a>
+				<a href="/archives.html">归档</a>
+				<a href="https://github.com/thriken/Py2HtmlBlog" target="_blank">py2htmlblog</a>
+			</div>
 		</div>
 	</div>
 </footer>
-
-<a href="#" class="back-to-top" id="backToTop" title="回到顶部">&uarr;</a>
 
 {{ footer_code|raw }}
 
